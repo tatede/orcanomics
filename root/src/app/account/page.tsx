@@ -24,11 +24,10 @@ export default async function AccountPage() {
   const classIds = teacherClasses.map((c) => c.id);
 
   const teacherStudents = classIds.length > 0
-    ? await db.select().from(students).where(
-        classIds.length === 1
-          ? eq(students.classId, classIds[0])
-          : eq(students.classId, classIds[0])
-      )
+    ? await db
+        .select()
+        .from(students)
+        .where(eq(students.classId, classIds[0]))
     : [];
 
   return (
