@@ -20,7 +20,7 @@ const corePillars = [
 ];
 
 const curriculumRows = [
-  { grade: "34", focus: "Needs vs. wants, coins, simple saving goals" },
+  { grade: "3-4", focus: "Needs vs. wants, coins, simple saving goals" },
   { grade: "4–5", focus: "Budget basics, earning, spending choices" },
   { grade: "6–8", focus: "Banking intro, interest, digital money habits" },
 ];
@@ -74,7 +74,7 @@ export default function HomePage() {
       <section id="home" className="border-b border-slate-200 bg-white">
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-14 md:grid-cols-[1.2fr_0.8fr] md:py-20">
           <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-cyan-700">Now enrolling K–8 classrooms</p>
+            <p className="text-sm font-medium uppercase tracking-wide text-cyan-700">Now enrolling 3–8 classrooms</p>
             <h1 className="mt-3 max-w-2xl text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-5xl">
               Financial education that feels clear, practical, and age-appropriate.
             </h1>
@@ -96,7 +96,7 @@ export default function HomePage() {
             <p className="text-sm font-semibold text-slate-900">This week in class</p>
             <ul className="mt-4 space-y-3 text-sm text-slate-700">
               <li className="border-l-2 border-cyan-700 pl-3">
-                <p className="font-medium text-slate-900">Grade 2</p>
+                <p className="font-medium text-slate-900">Grade 3</p>
                 <p>Choosing between needs and wants</p>
               </li>
               <li className="border-l-2 border-cyan-700 pl-3">
