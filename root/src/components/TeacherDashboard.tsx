@@ -23,6 +23,11 @@ export default function TeacherDashboard({
   const [showCreateClass, setShowCreateClass] = useState(false);
   const [showAddStudent, setShowAddStudent] = useState(false);
   const [revealedPasswords, setRevealedPasswords] = useState<Record<string, boolean>>({});
+  const [resetModal, setResetModal] = useState<{ id: string; username: string } | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [activeTab, setActiveTab] = useState<"roster" | "management" | "password">("roster");
+  const [search, setSearch] = useState("");
+  const [filterClass, setFilterClass] = useState("all");
 
   function togglePassword(id: string) {
     setRevealedPasswords((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -73,11 +78,35 @@ export default function TeacherDashboard({
     }
   }
 
+  async function resetPassword() {
+    if (!resetModal || !newPassword.trim()) return;
+    const res = await fetch(`/api/teacher/students/${resetModal.id}/password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ newPassword }),
+    });
+    if (res.ok) {
+      setMessage({ text: `Password updated for ${resetModal.username}`, ok: true });
+      setResetModal(null);
+      setNewPassword("");
+      window.location.reload();
+    } else {
+      const data = await res.json();
+      setMessage({ text: data.message || "Error updating password", ok: false });
+    }
+  }
+
+  const filteredStudents = students.filter((s) => {
+    const matchesClass = filterClass === "all" || s.classId === filterClass;
+    const matchesSearch = s.username.toLowerCase().includes(search.toLowerCase());
+    return matchesClass && matchesSearch;
+  });
+
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-slate-50 flex flex-col">
       {/* Header */}
       <header className="border-b border-slate-200 bg-white px-6 py-4 shadow-sm">
-        <div className="mx-auto flex max-w-5xl items-center justify-between">
+        <div className="mx-auto flex max-w-6xl items-center justify-between">
           <div className="flex items-center gap-3">
             <img src="/images/LogoV1.png" alt="Orcanomics" className="h-9 w-9 rounded-xl object-contain" />
             <div>
@@ -104,7 +133,7 @@ export default function TeacherDashboard({
         </div>
       </header>
 
-      <div className="mx-auto max-w-5xl px-6 py-10 space-y-6">
+      <div className="mx-auto w-full max-w-6xl px-6 py-8 space-y-6">
 
         {/* Message */}
         {message && (
@@ -144,10 +173,7 @@ export default function TeacherDashboard({
                 className="flex-1 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
                 onKeyDown={(e) => e.key === "Enter" && createClass()}
               />
-              <button
-                onClick={createClass}
-                className="rounded-xl bg-cyan-700 px-5 py-2 text-sm font-semibold text-white hover:bg-cyan-800 transition"
-              >
+              <button onClick={createClass} className="rounded-xl bg-cyan-700 px-5 py-2 text-sm font-semibold text-white hover:bg-cyan-800 transition">
                 Create
               </button>
             </div>
@@ -182,72 +208,177 @@ export default function TeacherDashboard({
                 placeholder="Password"
                 className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
               />
-              <button
-                onClick={createStudent}
-                className="w-full rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 transition"
-              >
+              <button onClick={createStudent} className="w-full rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 transition">
                 Add Student
               </button>
             </div>
           </section>
         )}
 
-        {/* Class Cards */}
-        {classes.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
-            <p className="text-slate-500 text-sm">No classes yet. Create one to get started.</p>
-          </div>
-        ) : (
-          classes.map((c) => {
-            const classStudents = students.filter((s) => s.classId === c.id);
-            return (
-              <section key={c.id} className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 bg-slate-50">
-                  <h2 className="font-semibold text-slate-900">{c.name}</h2>
-                  <span className="text-xs text-slate-500">{classStudents.length} student{classStudents.length !== 1 ? "s" : ""}</span>
-                </div>
-                {classStudents.length === 0 ? (
-                  <p className="px-6 py-5 text-sm text-slate-400">No students in this class yet.</p>
-                ) : (
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-slate-100 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
-                        <th className="px-6 py-3">Username</th>
-                        <th className="px-6 py-3">Password</th>
-                        <th className="px-6 py-3">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {classStudents.map((s) => (
-                        <tr key={s.id} className="border-b border-slate-50 hover:bg-slate-50 transition">
-                          <td className="px-6 py-3 font-medium text-slate-900">{s.username}</td>
-                          <td className="px-6 py-3 text-slate-600 font-mono">
-                            {revealedPasswords[s.id] ? s.password : "••••••••"}
-                            <button
-                              onClick={() => togglePassword(s.id)}
-                              className="ml-2 text-xs text-cyan-600 hover:underline"
-                            >
-                              {revealedPasswords[s.id] ? "Hide" : "Show"}
-                            </button>
-                          </td>
-                          <td className="px-6 py-3">
-                            <button
-                              onClick={() => deleteStudent(s.id)}
-                              className="text-xs text-red-500 hover:text-red-700 hover:underline transition"
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </section>
-            );
-          })
+        {/* Tabs */}
+        <div className="flex gap-2 border-b border-slate-200">
+          {(["roster", "management", "password"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 text-sm font-semibold capitalize transition border-b-2 -mb-px ${
+                activeTab === tab
+                  ? "border-cyan-600 text-cyan-700"
+                  : "border-transparent text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              {tab === "roster" ? "Class Roster" : tab === "management" ? "Student Management" : "Password Reset"}
+            </button>
+          ))}
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-3 flex-wrap">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search students..."
+            className="rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
+          />
+          <select
+            value={filterClass}
+            onChange={(e) => setFilterClass(e.target.value)}
+            className="rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
+          >
+            <option value="all">All Classes</option>
+            {classes.map((c) => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === "roster" && (
+          <section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  <th className="px-6 py-3">Username</th>
+                  <th className="px-6 py-3">Class</th>
+                  <th className="px-6 py-3">Password</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredStudents.length === 0 ? (
+                  <tr><td colSpan={3} className="px-6 py-5 text-sm text-slate-400 text-center">No students found.</td></tr>
+                ) : filteredStudents.map((s) => (
+                  <tr key={s.id} className="border-b border-slate-50 hover:bg-slate-50 transition">
+                    <td className="px-6 py-3 font-medium text-slate-900">{s.username}</td>
+                    <td className="px-6 py-3 text-slate-500 text-xs">{classes.find((c) => c.id === s.classId)?.name ?? "—"}</td>
+                    <td className="px-6 py-3 font-mono text-slate-600">
+                      {revealedPasswords[s.id] ? s.password : "••••••••"}
+                      <button onClick={() => togglePassword(s.id)} className="ml-2 text-xs text-cyan-600 hover:underline">
+                        {revealedPasswords[s.id] ? "Hide" : "Show"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
+
+        {activeTab === "management" && (
+          <section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  <th className="px-6 py-3">Username</th>
+                  <th className="px-6 py-3">Class</th>
+                  <th className="px-6 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredStudents.length === 0 ? (
+                  <tr><td colSpan={3} className="px-6 py-5 text-sm text-slate-400 text-center">No students found.</td></tr>
+                ) : filteredStudents.map((s) => (
+                  <tr key={s.id} className="border-b border-slate-50 hover:bg-slate-50 transition">
+                    <td className="px-6 py-3 font-medium text-slate-900">{s.username}</td>
+                    <td className="px-6 py-3 text-slate-500 text-xs">{classes.find((c) => c.id === s.classId)?.name ?? "—"}</td>
+                    <td className="px-6 py-3">
+                      <button
+                        onClick={() => deleteStudent(s.id)}
+                        className="text-xs text-red-500 hover:text-red-700 hover:underline transition"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
+
+        {activeTab === "password" && (
+          <section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  <th className="px-6 py-3">Username</th>
+                  <th className="px-6 py-3">Class</th>
+                  <th className="px-6 py-3">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredStudents.length === 0 ? (
+                  <tr><td colSpan={3} className="px-6 py-5 text-sm text-slate-400 text-center">No students found.</td></tr>
+                ) : filteredStudents.map((s) => (
+                  <tr key={s.id} className="border-b border-slate-50 hover:bg-slate-50 transition">
+                    <td className="px-6 py-3 font-medium text-slate-900">{s.username}</td>
+                    <td className="px-6 py-3 text-slate-500 text-xs">{classes.find((c) => c.id === s.classId)?.name ?? "—"}</td>
+                    <td className="px-6 py-3">
+                      <button
+                        onClick={() => { setResetModal({ id: s.id, username: s.username }); setNewPassword(""); }}
+                        className="rounded-lg bg-cyan-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-cyan-800 transition"
+                      >
+                        Reset Password
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
         )}
       </div>
+
+      {/* Password Reset Modal */}
+      {resetModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl">
+            <h2 className="mb-1 text-lg font-bold text-slate-900">Reset Password</h2>
+            <p className="mb-5 text-sm text-slate-500">Update password for <span className="font-semibold text-cyan-700">{resetModal.username}</span></p>
+            <input
+              type="text"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="New password"
+              className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none mb-4"
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => setResetModal(null)}
+                className="flex-1 rounded-xl border border-slate-200 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={resetPassword}
+                className="flex-2 flex-1 rounded-xl bg-cyan-700 py-2 text-sm font-semibold text-white hover:bg-cyan-800 transition"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
