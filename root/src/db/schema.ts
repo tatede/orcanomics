@@ -17,6 +17,7 @@ export const classes = pgTable("classes", {
 export const students = pgTable("students", {
   id: uuid("id").primaryKey().defaultRandom(),
   username: text("username").notNull().unique(),
+  password: text("password").notNull(),
   passwordHash: text("password_hash").notNull(),
   classId: uuid("class_id").notNull().references(() => classes.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow(),
