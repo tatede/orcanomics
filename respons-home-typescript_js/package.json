@@ -4,18 +4,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p ${PORT:-3000}",
+    "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "dotenv": "17.3.1",
     "drizzle-orm": "0.45.1",
     "next": "16.2.0",
+    "next-auth": "4.24.11",
     "pg": "8.20.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"
