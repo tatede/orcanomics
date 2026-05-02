@@ -103,29 +103,29 @@ export default function TeacherDashboard({
   });
 
   return (
-    <main className="min-h-screen bg-slate-50 flex flex-col">
+    <main className="min-h-screen bg-slate-100">
       {/* Header */}
-      <header className="border-b border-slate-200 bg-white px-6 py-4 shadow-sm">
+      <header className="bg-white border-b-2 border-cyan-600 px-6 py-4 shadow-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/images/LogoV1.png" alt="Orcanomics" className="h-9 w-9 rounded-xl object-contain" />
+            <img src="/images/LogoV1.png" alt="Orcanomics" className="h-10 w-10 rounded-xl object-contain" />
             <div>
-              <p className="font-extrabold tracking-tight text-cyan-700">Orcanomics</p>
-              <p className="text-xs text-slate-400">Teacher Dashboard</p>
+              <p className="text-lg font-extrabold tracking-tight text-cyan-700">Orcanomics</p>
+              <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">Teacher Dashboard</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <p className="text-sm font-medium text-slate-600">{teacher.name ?? teacher.email}</p>
+              <p className="text-sm font-semibold text-slate-700">{teacher.name ?? teacher.email}</p>
               {teacher.badge && (
-                <span className="rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 px-3 py-1 text-xs font-bold text-white shadow-sm">
+                <span className="rounded-full bg-cyan-600 px-3 py-1 text-xs font-bold text-white">
                   {teacher.badge}
                 </span>
               )}
             </div>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100 transition"
+              className="rounded-lg bg-slate-100 border border-slate-300 px-4 py-1.5 text-sm font-semibold text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition"
             >
               Sign Out
             </button>
@@ -137,43 +137,68 @@ export default function TeacherDashboard({
 
         {/* Message */}
         {message && (
-          <div className={`rounded-xl px-4 py-3 text-sm font-medium ${message.ok ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+          <div className={`rounded-xl px-4 py-3 text-sm font-semibold border ${message.ok ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"}`}>
             {message.text}
           </div>
         )}
+
+        {/* Stats row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="rounded-2xl bg-white border border-slate-200 px-5 py-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Total Students</p>
+            <p className="mt-1 text-3xl font-extrabold text-cyan-700">{students.length}</p>
+          </div>
+          <div className="rounded-2xl bg-white border border-slate-200 px-5 py-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Classes</p>
+            <p className="mt-1 text-3xl font-extrabold text-teal-600">{classes.length}</p>
+          </div>
+          <div className="rounded-2xl bg-white border border-slate-200 px-5 py-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Avg Class Size</p>
+            <p className="mt-1 text-3xl font-extrabold text-slate-700">
+              {classes.length > 0 ? Math.round(students.length / classes.length) : 0}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-white border border-slate-200 px-5 py-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Status</p>
+            <p className="mt-1 text-sm font-bold text-green-600">● Active</p>
+          </div>
+        </div>
 
         {/* Top actions */}
         <div className="flex gap-3">
           <button
             onClick={() => { setShowCreateClass(!showCreateClass); setShowAddStudent(false); }}
-            className="rounded-xl bg-cyan-700 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-800 transition"
+            className="rounded-xl bg-cyan-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-cyan-800 shadow-sm transition"
           >
-            {showCreateClass ? "Cancel" : "+ New Class"}
+            {showCreateClass ? "✕ Cancel" : "+ New Class"}
           </button>
           {classes.length > 0 && (
             <button
               onClick={() => { setShowAddStudent(!showAddStudent); setShowCreateClass(false); }}
-              className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 transition"
+              className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 shadow-sm transition"
             >
-              {showAddStudent ? "Cancel" : "+ Add Student"}
+              {showAddStudent ? "✕ Cancel" : "+ Add Student"}
             </button>
           )}
         </div>
 
         {/* Create Class Panel */}
         {showCreateClass && (
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-900 mb-4">New Class</h2>
+          <section className="rounded-2xl border-2 border-cyan-200 bg-cyan-50 p-6">
+            <h2 className="text-base font-bold text-cyan-800 mb-4">New Class</h2>
             <div className="flex gap-3">
               <input
                 type="text"
                 value={className}
                 onChange={(e) => setClassName(e.target.value)}
-                placeholder="Class name e.g. Period 3"
-                className="flex-1 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
+                placeholder="e.g. Period 3 or Finance 101"
+                className="flex-1 rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-medium focus:border-cyan-500 focus:outline-none"
                 onKeyDown={(e) => e.key === "Enter" && createClass()}
               />
-              <button onClick={createClass} className="rounded-xl bg-cyan-700 px-5 py-2 text-sm font-semibold text-white hover:bg-cyan-800 transition">
+              <button
+                onClick={createClass}
+                className="rounded-xl bg-cyan-700 px-6 py-2 text-sm font-bold text-white hover:bg-cyan-800 transition"
+              >
                 Create
               </button>
             </div>
@@ -182,13 +207,13 @@ export default function TeacherDashboard({
 
         {/* Add Student Panel */}
         {showAddStudent && (
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-base font-semibold text-slate-900 mb-4">Add Student</h2>
+          <section className="rounded-2xl border-2 border-teal-200 bg-teal-50 p-6">
+            <h2 className="text-base font-bold text-teal-800 mb-4">Add Student</h2>
             <div className="space-y-3">
               <select
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value)}
-                className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
+                className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-medium focus:border-teal-500 focus:outline-none"
               >
                 {classes.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
@@ -199,16 +224,19 @@ export default function TeacherDashboard({
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Username"
-                className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
+                className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-medium focus:border-teal-500 focus:outline-none"
               />
               <input
                 type="text"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
+                className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-medium focus:border-teal-500 focus:outline-none"
               />
-              <button onClick={createStudent} className="w-full rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700 transition">
+              <button
+                onClick={createStudent}
+                className="w-full rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition"
+              >
                 Add Student
               </button>
             </div>
@@ -216,18 +244,18 @@ export default function TeacherDashboard({
         )}
 
         {/* Tabs */}
-        <div className="flex gap-2 border-b border-slate-200">
+        <div className="flex gap-1 bg-white border border-slate-200 rounded-2xl p-1.5 shadow-sm w-fit">
           {(["roster", "management", "password"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 text-sm font-semibold capitalize transition border-b-2 -mb-px ${
+              className={`px-5 py-2 text-sm font-bold rounded-xl transition ${
                 activeTab === tab
-                  ? "border-cyan-600 text-cyan-700"
-                  : "border-transparent text-slate-500 hover:text-slate-700"
+                  ? "bg-cyan-700 text-white shadow-sm"
+                  : "text-slate-500 hover:text-slate-700 hover:bg-slate-100"
               }`}
             >
-              {tab === "roster" ? "Class Roster" : tab === "management" ? "Student Management" : "Password Reset"}
+              {tab === "roster" ? "Class Roster" : tab === "management" ? "Management" : "Passwords"}
             </button>
           ))}
         </div>
@@ -239,12 +267,12 @@ export default function TeacherDashboard({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search students..."
-            className="rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
+            className="rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-medium focus:border-cyan-500 focus:outline-none shadow-sm"
           />
           <select
             value={filterClass}
             onChange={(e) => setFilterClass(e.target.value)}
-            className="rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
+            className="rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-medium focus:border-cyan-500 focus:outline-none shadow-sm"
           >
             <option value="all">All Classes</option>
             {classes.map((c) => (
@@ -253,12 +281,22 @@ export default function TeacherDashboard({
           </select>
         </div>
 
-        {/* Tab Content */}
-        {activeTab === "roster" && (
-          <section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+        {/* Tables */}
+        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          {/* Table header accent */}
+          <div className="bg-cyan-700 px-6 py-3 flex items-center justify-between">
+            <p className="text-sm font-bold text-white">
+              {activeTab === "roster" ? "Class Roster" : activeTab === "management" ? "Student Management" : "Password Reset"}
+            </p>
+            <span className="rounded-full bg-white/20 px-3 py-0.5 text-xs font-bold text-white">
+              {filteredStudents.length} student{filteredStudents.length !== 1 ? "s" : ""}
+            </span>
+          </div>
+
+          {activeTab === "roster" && (
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <tr className="border-b-2 border-slate-100 text-left text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50">
                   <th className="px-6 py-3">Username</th>
                   <th className="px-6 py-3">Class</th>
                   <th className="px-6 py-3">Password</th>
@@ -266,14 +304,20 @@ export default function TeacherDashboard({
               </thead>
               <tbody>
                 {filteredStudents.length === 0 ? (
-                  <tr><td colSpan={3} className="px-6 py-5 text-sm text-slate-400 text-center">No students found.</td></tr>
+                  <tr><td colSpan={3} className="px-6 py-8 text-sm text-slate-400 text-center">No students found.</td></tr>
                 ) : filteredStudents.map((s) => (
-                  <tr key={s.id} className="border-b border-slate-50 hover:bg-slate-50 transition">
-                    <td className="px-6 py-3 font-medium text-slate-900">{s.username}</td>
-                    <td className="px-6 py-3 text-slate-500 text-xs">{classes.find((c) => c.id === s.classId)?.name ?? "—"}</td>
-                    <td className="px-6 py-3 font-mono text-slate-600">
-                      {revealedPasswords[s.id] ? s.password : "••••••••"}
-                      <button onClick={() => togglePassword(s.id)} className="ml-2 text-xs text-cyan-600 hover:underline">
+                  <tr key={s.id} className="border-b border-slate-100 hover:bg-slate-50 transition">
+                    <td className="px-6 py-3.5 font-bold text-slate-900">{s.username}</td>
+                    <td className="px-6 py-3.5">
+                      <span className="rounded-full bg-cyan-50 border border-cyan-200 px-3 py-1 text-xs font-semibold text-cyan-700">
+                        {classes.find((c) => c.id === s.classId)?.name ?? "—"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3.5 font-mono text-slate-500">
+                      {revealedPasswords[s.id] ? (
+                        <span className="text-slate-800 font-semibold">{s.password}</span>
+                      ) : "••••••••"}
+                      <button onClick={() => togglePassword(s.id)} className="ml-3 text-xs font-bold text-cyan-600 hover:text-cyan-800">
                         {revealedPasswords[s.id] ? "Hide" : "Show"}
                       </button>
                     </td>
@@ -281,14 +325,12 @@ export default function TeacherDashboard({
                 ))}
               </tbody>
             </table>
-          </section>
-        )}
+          )}
 
-        {activeTab === "management" && (
-          <section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          {activeTab === "management" && (
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <tr className="border-b-2 border-slate-100 text-left text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50">
                   <th className="px-6 py-3">Username</th>
                   <th className="px-6 py-3">Class</th>
                   <th className="px-6 py-3">Actions</th>
@@ -296,15 +338,19 @@ export default function TeacherDashboard({
               </thead>
               <tbody>
                 {filteredStudents.length === 0 ? (
-                  <tr><td colSpan={3} className="px-6 py-5 text-sm text-slate-400 text-center">No students found.</td></tr>
+                  <tr><td colSpan={3} className="px-6 py-8 text-sm text-slate-400 text-center">No students found.</td></tr>
                 ) : filteredStudents.map((s) => (
-                  <tr key={s.id} className="border-b border-slate-50 hover:bg-slate-50 transition">
-                    <td className="px-6 py-3 font-medium text-slate-900">{s.username}</td>
-                    <td className="px-6 py-3 text-slate-500 text-xs">{classes.find((c) => c.id === s.classId)?.name ?? "—"}</td>
-                    <td className="px-6 py-3">
+                  <tr key={s.id} className="border-b border-slate-100 hover:bg-slate-50 transition">
+                    <td className="px-6 py-3.5 font-bold text-slate-900">{s.username}</td>
+                    <td className="px-6 py-3.5">
+                      <span className="rounded-full bg-cyan-50 border border-cyan-200 px-3 py-1 text-xs font-semibold text-cyan-700">
+                        {classes.find((c) => c.id === s.classId)?.name ?? "—"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3.5">
                       <button
                         onClick={() => deleteStudent(s.id)}
-                        className="text-xs text-red-500 hover:text-red-700 hover:underline transition"
+                        className="rounded-lg bg-red-50 border border-red-200 px-3 py-1 text-xs font-bold text-red-600 hover:bg-red-100 transition"
                       >
                         Delete
                       </button>
@@ -313,14 +359,12 @@ export default function TeacherDashboard({
                 ))}
               </tbody>
             </table>
-          </section>
-        )}
+          )}
 
-        {activeTab === "password" && (
-          <section className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          {activeTab === "password" && (
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <tr className="border-b-2 border-slate-100 text-left text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50">
                   <th className="px-6 py-3">Username</th>
                   <th className="px-6 py-3">Class</th>
                   <th className="px-6 py-3">Action</th>
@@ -328,15 +372,19 @@ export default function TeacherDashboard({
               </thead>
               <tbody>
                 {filteredStudents.length === 0 ? (
-                  <tr><td colSpan={3} className="px-6 py-5 text-sm text-slate-400 text-center">No students found.</td></tr>
+                  <tr><td colSpan={3} className="px-6 py-8 text-sm text-slate-400 text-center">No students found.</td></tr>
                 ) : filteredStudents.map((s) => (
-                  <tr key={s.id} className="border-b border-slate-50 hover:bg-slate-50 transition">
-                    <td className="px-6 py-3 font-medium text-slate-900">{s.username}</td>
-                    <td className="px-6 py-3 text-slate-500 text-xs">{classes.find((c) => c.id === s.classId)?.name ?? "—"}</td>
-                    <td className="px-6 py-3">
+                  <tr key={s.id} className="border-b border-slate-100 hover:bg-slate-50 transition">
+                    <td className="px-6 py-3.5 font-bold text-slate-900">{s.username}</td>
+                    <td className="px-6 py-3.5">
+                      <span className="rounded-full bg-cyan-50 border border-cyan-200 px-3 py-1 text-xs font-semibold text-cyan-700">
+                        {classes.find((c) => c.id === s.classId)?.name ?? "—"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3.5">
                       <button
                         onClick={() => { setResetModal({ id: s.id, username: s.username }); setNewPassword(""); }}
-                        className="rounded-lg bg-cyan-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-cyan-800 transition"
+                        className="rounded-lg bg-cyan-50 border border-cyan-300 px-3 py-1 text-xs font-bold text-cyan-700 hover:bg-cyan-100 transition"
                       >
                         Reset Password
                       </button>
@@ -345,36 +393,40 @@ export default function TeacherDashboard({
                 ))}
               </tbody>
             </table>
-          </section>
-        )}
+          )}
+        </section>
       </div>
 
       {/* Password Reset Modal */}
       {resetModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl">
-            <h2 className="mb-1 text-lg font-bold text-slate-900">Reset Password</h2>
-            <p className="mb-5 text-sm text-slate-500">Update password for <span className="font-semibold text-cyan-700">{resetModal.username}</span></p>
-            <input
-              type="text"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="New password"
-              className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none mb-4"
-            />
-            <div className="flex gap-3">
-              <button
-                onClick={() => setResetModal(null)}
-                className="flex-1 rounded-xl border border-slate-200 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={resetPassword}
-                className="flex-2 flex-1 rounded-xl bg-cyan-700 py-2 text-sm font-semibold text-white hover:bg-cyan-800 transition"
-              >
-                Update
-              </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-full max-w-sm rounded-2xl bg-white shadow-2xl overflow-hidden">
+            <div className="bg-cyan-700 px-6 py-4">
+              <h2 className="text-base font-bold text-white">Reset Password</h2>
+              <p className="text-xs text-cyan-200 mt-0.5">for <span className="font-bold text-white">{resetModal.username}</span></p>
+            </div>
+            <div className="p-6 space-y-4">
+              <input
+                type="text"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="New password"
+                className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 text-sm font-medium focus:border-cyan-500 focus:outline-none"
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setResetModal(null)}
+                  className="flex-1 rounded-xl border-2 border-slate-200 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-50 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={resetPassword}
+                  className="flex-1 rounded-xl bg-cyan-700 py-2.5 text-sm font-bold text-white hover:bg-cyan-800 transition"
+                >
+                  Update
+                </button>
+              </div>
             </div>
           </div>
         </div>
