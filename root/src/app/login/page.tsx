@@ -15,7 +15,7 @@ export default function LoginPage() {
             className="mx-auto rounded-xl"
           />
           <h1 className="mt-3 text-xl font-bold text-slate-900">Sign in to Orcanomics</h1>
-          <p className="mt-1 text-sm text-slate-500">Financial learning for K–8</p>
+          <p className="mt-1 text-sm text-slate-500">Financial learning for 3–8</p>
         </div>
         <button
           onClick={() => signIn("google", { callbackUrl: "/" })}
