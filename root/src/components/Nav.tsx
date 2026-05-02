@@ -9,7 +9,6 @@ export default function Nav() {
 
   return (
     <>
-      {/* Desktop nav */}
       <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
         <Link href="#home" className="text-cyan-700">Home</Link>
         <Link href="#about" className="text-slate-700 transition hover:text-cyan-700">About</Link>
@@ -52,7 +51,6 @@ export default function Nav() {
         )}
       </nav>
 
-      {/* Mobile nav */}
       <details className="relative md:hidden">
         <summary className="list-none rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 marker:content-none">
           Menu
