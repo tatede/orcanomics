@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { db } from "@/db";
-import { sql } from "drizzle-orm";
 
-export const dynamic = "force-dynamic";
+// Static landing page – no DB call needed here.
+// Move data-fetching to dedicated API routes or server components
+// that actually need the data.
 
 const corePillars = [
   {
@@ -25,11 +25,10 @@ const curriculumRows = [
   { grade: "6–8", focus: "Banking intro, interest, digital money habits" },
 ];
 
-export default async function HomePage() {
-  await db.execute(sql`select 1`);
-
+export default function HomePage() {
   return (
     <main className="min-h-screen bg-stone-50 text-slate-900">
+      {/* ── Header ── */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-20 w-full max-w-6xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-3">
@@ -43,25 +42,13 @@ export default async function HomePage() {
           </Link>
 
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-            <Link href="#home" className="text-cyan-700">
-              Home
-            </Link>
-            <Link href="#about" className="text-slate-700 transition hover:text-cyan-700">
-              About
-            </Link>
-            <Link href="#contact" className="text-slate-700 transition hover:text-cyan-700">
-              Contact
-            </Link>
-            <Link
-              href="#"
-              className="rounded-full border border-slate-300 px-4 py-2 text-slate-700 transition hover:border-cyan-600 hover:text-cyan-700"
-            >
+            <Link href="#home" className="text-cyan-700">Home</Link>
+            <Link href="#about" className="text-slate-700 transition hover:text-cyan-700">About</Link>
+            <Link href="#contact" className="text-slate-700 transition hover:text-cyan-700">Contact</Link>
+            <Link href="/login" className="rounded-full border border-slate-300 px-4 py-2 text-slate-700 transition hover:border-cyan-600 hover:text-cyan-700">
               Login / Signup
             </Link>
-            <Link
-              href="#"
-              className="rounded-full bg-teal-600 px-4 py-2 font-semibold text-white transition hover:bg-teal-700"
-            >
+            <Link href="/account" className="rounded-full bg-teal-600 px-4 py-2 font-semibold text-white transition hover:bg-teal-700">
               Your Account
             </Link>
           </nav>
@@ -71,26 +58,17 @@ export default async function HomePage() {
               Menu
             </summary>
             <div className="absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
-              <Link href="#home" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">
-                Home
-              </Link>
-              <Link href="#about" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">
-                About
-              </Link>
-              <Link href="#contact" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">
-                Contact
-              </Link>
-              <Link href="#" className="mt-1 block rounded-lg px-3 py-2 text-sm text-cyan-700 hover:bg-cyan-50">
-                Login
-              </Link>
-              <Link href="#" className="block rounded-lg px-3 py-2 text-sm text-teal-700 hover:bg-teal-50">
-                Your Account
-              </Link>
+              <Link href="#home" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">Home</Link>
+              <Link href="#about" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">About</Link>
+              <Link href="#contact" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">Contact</Link>
+              <Link href="/login" className="mt-1 block rounded-lg px-3 py-2 text-sm text-cyan-700 hover:bg-cyan-50">Login</Link>
+              <Link href="/account" className="block rounded-lg px-3 py-2 text-sm text-teal-700 hover:bg-teal-50">Your Account</Link>
             </div>
           </details>
         </div>
       </header>
 
+      {/* ── Hero ── */}
       <section id="home" className="border-b border-slate-200 bg-white">
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-14 md:grid-cols-[1.2fr_0.8fr] md:py-20">
           <div>
@@ -103,10 +81,10 @@ export default async function HomePage() {
               skills children actually need.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="#" className="rounded-md bg-cyan-700 px-5 py-3 text-sm font-semibold text-white hover:bg-cyan-800">
+              <Link href="/login" className="rounded-md bg-cyan-700 px-5 py-3 text-sm font-semibold text-white hover:bg-cyan-800">
                 Login
               </Link>
-              <Link href="#" className="rounded-md border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-100">
+              <Link href="/demo" className="rounded-md border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-100">
                 View Demo Lesson
               </Link>
             </div>
@@ -132,9 +110,12 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── About ── */}
       <section id="about" className="mx-auto w-full max-w-6xl px-6 py-14">
         <div className="mb-8 max-w-2xl">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">Why schools and families use Orcanomics</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+            Why schools and families use Orcanomics
+          </h2>
           <p className="mt-3 text-slate-700">
             We built Orcanomics to support real classrooms. The platform is simple to run, easy to understand, and
             focused on meaningful student growth.
@@ -151,6 +132,7 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Curriculum ── */}
       <section className="border-y border-slate-200 bg-white">
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-14 md:grid-cols-2 md:items-start">
           <div>
@@ -183,6 +165,7 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Parent tools + Mascot ── */}
       <section className="mx-auto w-full max-w-6xl px-6 py-14">
         <div className="grid gap-8 md:grid-cols-2">
           <article className="rounded-xl border border-slate-200 bg-white p-6">
@@ -206,19 +189,22 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── CTA ── */}
       <section className="bg-slate-900 py-14 text-white">
         <div className="mx-auto w-full max-w-6xl px-6">
           <div className="max-w-3xl">
             <p className="text-sm uppercase tracking-wide text-cyan-300">For schools, families, and after-school programs</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight">Teach money skills early—with tools built for real classrooms.</h2>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight">
+              Teach money skills early—with tools built for real classrooms.
+            </h2>
             <p className="mt-4 text-slate-300">
               Start with one class or one child. Expand as needed. Orcanomics is built to be practical from day one.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="#" className="rounded-md bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-cyan-400">
+              <Link href="/trial" className="rounded-md bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-cyan-400">
                 Start Free Trial
               </Link>
-              <Link href="#" className="rounded-md border border-slate-600 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">
+              <Link href="/contact" className="rounded-md border border-slate-600 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">
                 Talk to Our Team
               </Link>
             </div>
@@ -226,19 +212,14 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Footer ── */}
       <footer id="contact" className="border-t border-slate-200 bg-stone-100 py-10">
         <div className="mx-auto flex w-full max-w-6xl flex-col justify-between gap-4 px-6 text-sm text-slate-700 md:flex-row md:items-center">
           <p>© 2026 Orcanomics. All rights reserved.</p>
           <div className="flex items-center gap-5">
-            <Link href="#" className="hover:text-cyan-700">
-              FAQ
-            </Link>
-            <Link href="#" className="hover:text-cyan-700">
-              Contact
-            </Link>
-            <Link href="#" className="hover:text-cyan-700">
-              Privacy
-            </Link>
+            <Link href="/faq" className="hover:text-cyan-700">FAQ</Link>
+            <Link href="/contact" className="hover:text-cyan-700">Contact</Link>
+            <Link href="/privacy" className="hover:text-cyan-700">Privacy</Link>
           </div>
         </div>
       </footer>
