@@ -20,8 +20,8 @@ const corePillars = [
 ];
 
 const curriculumRows = [
-  { grade: "K–2", focus: "Needs vs. wants, coins, simple saving goals" },
-  { grade: "3–5", focus: "Budget basics, earning, spending choices" },
+  { grade: "34", focus: "Needs vs. wants, coins, simple saving goals" },
+  { grade: "4–5", focus: "Budget basics, earning, spending choices" },
   { grade: "6–8", focus: "Banking intro, interest, digital money habits" },
 ];
 
@@ -32,12 +32,14 @@ export default function HomePage() {
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-20 w-full max-w-6xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-600 text-lg text-white shadow-sm">
-              🐳
-            </div>
+           <img
+              src="/images/LogoV1.png"
+              alt="Orcanomics logo"
+              className="h-10 w-10 rounded-xl object-contain"
+             />
             <div>
               <p className="text-lg font-extrabold tracking-tight text-cyan-700">Orcanomics</p>
-              <p className="text-xs text-slate-500">Financial learning for K–8</p>
+              <p className="text-xs text-slate-500">Financial learning for 3–8</p>
             </div>
           </Link>
 
@@ -215,7 +217,7 @@ export default function HomePage() {
       {/* ── Footer ── */}
       <footer id="contact" className="border-t border-slate-200 bg-stone-100 py-10">
         <div className="mx-auto flex w-full max-w-6xl flex-col justify-between gap-4 px-6 text-sm text-slate-700 md:flex-row md:items-center">
-          <p>© 2026 Orcanomics. All rights reserved.</p>
+          <p>© 2026 tatedb.xyz. All rights reserved.</p>
           <div className="flex items-center gap-5">
             <Link href="/faq" className="hover:text-cyan-700">FAQ</Link>
             <Link href="/contact" className="hover:text-cyan-700">Contact</Link>
