@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { teachers, classes, students } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import TeacherDashboard from "@/components/TeacherDashboard";
 
@@ -27,7 +27,7 @@ export default async function AccountPage() {
     ? await db
         .select()
         .from(students)
-        .where(eq(students.classId, classIds[0]))
+        .where(inArray(students.classId, classIds))
     : [];
 
   return (
