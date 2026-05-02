@@ -1,10 +1,41 @@
-export default function AccountPage() {
+import { auth } from "@/auth";
+import { db } from "@/db";
+import { teachers, classes, students } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
+import TeacherDashboard from "@/components/TeacherDashboard";
+
+export default async function AccountPage() {
+  const session = await auth();
+  if (!session?.user?.email) redirect("/login");
+
+  const [teacher] = await db
+    .select()
+    .from(teachers)
+    .where(eq(teachers.email, session.user.email));
+
+  if (!teacher) redirect("/login");
+
+  const teacherClasses = await db
+    .select()
+    .from(classes)
+    .where(eq(classes.teacherId, teacher.id));
+
+  const classIds = teacherClasses.map((c) => c.id);
+
+  const teacherStudents = classIds.length > 0
+    ? await db.select().from(students).where(
+        classIds.length === 1
+          ? eq(students.classId, classIds[0])
+          : eq(students.classId, classIds[0])
+      )
+    : [];
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-stone-50">
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 className="text-xl font-bold text-slate-900">Your Account</h1>
-        <p className="mt-2 text-sm text-slate-500">Coming soon.</p>
-      </div>
-    </main>
+    <TeacherDashboard
+      teacher={teacher}
+      classes={teacherClasses}
+      students={teacherStudents}
+    />
   );
 }
