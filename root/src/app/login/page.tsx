@@ -18,7 +18,7 @@ export default function LoginPage() {
           <p className="mt-1 text-sm text-slate-500">Financial learning for K–8</p>
         </div>
         <button
-          onClick={() => signIn("google", { callbackUrl: "/account" })}
+          onClick={() => signIn("google", { callbackUrl: "/" })}
           className="flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
