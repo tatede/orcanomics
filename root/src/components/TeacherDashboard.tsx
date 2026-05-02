@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 
-type Teacher = { id: string; name: string | null; email: string };
+type Teacher = { id: string; name: string | null; email: string; badge: string | null };
 type Class = { id: string; name: string; teacherId: string };
 type Student = { id: string; username: string; password: string; classId: string };
 
@@ -64,8 +64,13 @@ export default function TeacherDashboard({
 
   async function deleteStudent(id: string) {
     if (!confirm("Delete this student?")) return;
-    await fetch(`/api/teacher/students/${id}`, { method: "DELETE" });
-    window.location.reload();
+    const res = await fetch(`/api/teacher/students/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      window.location.reload();
+    } else {
+      const data = await res.json();
+      setMessage({ text: data.message || "Error deleting student", ok: false });
+    }
   }
 
   return (
@@ -81,7 +86,14 @@ export default function TeacherDashboard({
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <p className="text-sm font-medium text-slate-600">{teacher.name ?? teacher.email}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-slate-600">{teacher.name ?? teacher.email}</p>
+              {teacher.badge && (
+                <span className="rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 px-3 py-1 text-xs font-bold text-white shadow-sm">
+                  {teacher.badge}
+                </span>
+              )}
+            </div>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
               className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100 transition"
