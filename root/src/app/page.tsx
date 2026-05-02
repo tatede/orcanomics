@@ -20,7 +20,7 @@ const corePillars = [
 ];
 
 const curriculumRows = [
-  { grade: "3-5", focus: "Needs vs. wants, coins, simple saving goals" },
+  { grade: "3–5", focus: "Needs vs. wants, coins, simple saving goals" },
   { grade: "4–5", focus: "Budget basics, earning, spending choices" },
   { grade: "6–8", focus: "Banking intro, interest, digital money habits" },
 ];
@@ -33,9 +33,11 @@ export default async function HomePage() {
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-20 w-full max-w-6xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-600 text-lg text-white shadow-sm">
-              🐳
-            </div>
+            <img
+              src="/images/LogoV1.png"
+              alt="Orcanomics logo"
+              className="h-10 w-10 rounded-xl object-contain"
+            />
             <div>
               <p className="text-lg font-extrabold tracking-tight text-cyan-700">Orcanomics</p>
               <p className="text-xs text-slate-500">Financial learning for 3–8</p>
@@ -43,23 +45,17 @@ export default async function HomePage() {
           </Link>
 
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-            <Link href="#home" className="text-cyan-700">
-              Home
-            </Link>
-            <Link href="#about" className="text-slate-700 transition hover:text-cyan-700">
-              About
-            </Link>
-            <Link href="#contact" className="text-slate-700 transition hover:text-cyan-700">
-              Contact
-            </Link>
+            <Link href="#home" className="text-cyan-700">Home</Link>
+            <Link href="#about" className="text-slate-700 transition hover:text-cyan-700">About</Link>
+            <Link href="#contact" className="text-slate-700 transition hover:text-cyan-700">Contact</Link>
             <Link
-              href="#"
+              href="/login"
               className="rounded-full border border-slate-300 px-4 py-2 text-slate-700 transition hover:border-cyan-600 hover:text-cyan-700"
             >
               Login / Signup
             </Link>
             <Link
-              href="#"
+              href="/account"
               className="rounded-full bg-teal-600 px-4 py-2 font-semibold text-white transition hover:bg-teal-700"
             >
               Your Account
@@ -71,21 +67,11 @@ export default async function HomePage() {
               Menu
             </summary>
             <div className="absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
-              <Link href="#home" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">
-                Home
-              </Link>
-              <Link href="#about" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">
-                About
-              </Link>
-              <Link href="#contact" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">
-                Contact
-              </Link>
-              <Link href="#" className="mt-1 block rounded-lg px-3 py-2 text-sm text-cyan-700 hover:bg-cyan-50">
-                Login
-              </Link>
-              <Link href="#" className="block rounded-lg px-3 py-2 text-sm text-teal-700 hover:bg-teal-50">
-                Your Account
-              </Link>
+              <Link href="#home" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">Home</Link>
+              <Link href="#about" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">About</Link>
+              <Link href="#contact" className="block rounded-lg px-3 py-2 text-sm hover:bg-slate-100">Contact</Link>
+              <Link href="/login" className="mt-1 block rounded-lg px-3 py-2 text-sm text-cyan-700 hover:bg-cyan-50">Login</Link>
+              <Link href="/account" className="block rounded-lg px-3 py-2 text-sm text-teal-700 hover:bg-teal-50">Your Account</Link>
             </div>
           </details>
         </div>
@@ -103,7 +89,7 @@ export default async function HomePage() {
               skills children actually need.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="#" className="rounded-md bg-cyan-700 px-5 py-3 text-sm font-semibold text-white hover:bg-cyan-800">
+              <Link href="/login" className="rounded-md bg-cyan-700 px-5 py-3 text-sm font-semibold text-white hover:bg-cyan-800">
                 Login
               </Link>
               <Link href="#" className="rounded-md border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-100">
@@ -215,10 +201,10 @@ export default async function HomePage() {
               Start with one class or one child. Expand as needed. Orcanomics is built to be practical from day one.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="#" className="rounded-md bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-cyan-400">
+              <Link href="/login" className="rounded-md bg-cyan-500 px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-cyan-400">
                 Start Free Trial
               </Link>
-              <Link href="#" className="rounded-md border border-slate-600 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">
+              <Link href="#contact" className="rounded-md border border-slate-600 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">
                 Talk to Our Team
               </Link>
             </div>
@@ -230,15 +216,9 @@ export default async function HomePage() {
         <div className="mx-auto flex w-full max-w-6xl flex-col justify-between gap-4 px-6 text-sm text-slate-700 md:flex-row md:items-center">
           <p>© 2026 tatedb.xyz. All rights reserved.</p>
           <div className="flex items-center gap-5">
-            <Link href="#" className="hover:text-cyan-700">
-              FAQ
-            </Link>
-            <Link href="#" className="hover:text-cyan-700">
-              Contact
-            </Link>
-            <Link href="#" className="hover:text-cyan-700">
-              Privacy
-            </Link>
+            <Link href="#" className="hover:text-cyan-700">FAQ</Link>
+            <Link href="#" className="hover:text-cyan-700">Contact</Link>
+            <Link href="#" className="hover:text-cyan-700">Privacy</Link>
           </div>
         </div>
       </footer>
