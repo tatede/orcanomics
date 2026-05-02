@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   const passwordHash = await bcrypt.hash(password, 10);
 
   try {
-    await db.insert(students).values({ username, passwordHash, classId });
+    await db.insert(students).values({ username, password, passwordHash, classId });
     return Response.json({ ok: true });
   } catch {
     return Response.json({ message: "Username already taken" }, { status: 400 });
