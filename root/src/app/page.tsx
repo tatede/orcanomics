@@ -20,8 +20,8 @@ const corePillars = [
 ];
 
 const curriculumRows = [
-  { grade: "K–2", focus: "Needs vs. wants, coins, simple saving goals" },
-  { grade: "3–5", focus: "Budget basics, earning, spending choices" },
+  { grade: "3-5", focus: "Needs vs. wants, coins, simple saving goals" },
+  { grade: "4–5", focus: "Budget basics, earning, spending choices" },
   { grade: "6–8", focus: "Banking intro, interest, digital money habits" },
 ];
 
@@ -38,7 +38,7 @@ export default async function HomePage() {
             </div>
             <div>
               <p className="text-lg font-extrabold tracking-tight text-cyan-700">Orcanomics</p>
-              <p className="text-xs text-slate-500">Financial learning for K–8</p>
+              <p className="text-xs text-slate-500">Financial learning for 3–8</p>
             </div>
           </Link>
 
@@ -94,7 +94,7 @@ export default async function HomePage() {
       <section id="home" className="border-b border-slate-200 bg-white">
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-14 md:grid-cols-[1.2fr_0.8fr] md:py-20">
           <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-cyan-700">Now enrolling K–8 classrooms</p>
+            <p className="text-sm font-medium uppercase tracking-wide text-cyan-700">Now enrolling 3–8 classrooms</p>
             <h1 className="mt-3 max-w-2xl text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-5xl">
               Financial education that feels clear, practical, and age-appropriate.
             </h1>
@@ -228,7 +228,7 @@ export default async function HomePage() {
 
       <footer id="contact" className="border-t border-slate-200 bg-stone-100 py-10">
         <div className="mx-auto flex w-full max-w-6xl flex-col justify-between gap-4 px-6 text-sm text-slate-700 md:flex-row md:items-center">
-          <p>© 2026 Orcanomics. All rights reserved.</p>
+          <p>© 2026 tatedb.xyz. All rights reserved.</p>
           <div className="flex items-center gap-5">
             <Link href="#" className="hover:text-cyan-700">
               FAQ
