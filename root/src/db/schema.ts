@@ -4,6 +4,7 @@ export const teachers = pgTable("teachers", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
   name: text("name"),
+  badge: text("badge"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
