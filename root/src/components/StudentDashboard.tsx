@@ -23,7 +23,7 @@ export default function StudentDashboard({
 
   const navItems = [
     { label: "Dashboard", href: "/student/dashboard", icon: "⊞", active: true },
-    { label: "Classroom", href: "/student/classroom", icon: "🏫" },
+    { label: "Classroom", href: "/student/classroom", icon: "🖥" },
     { label: "Practice", href: "/student/practice", icon: "🎮" },
     { label: "Shop", href: "/student/shop", icon: "🛒" },
     { label: "Account", href: "/student/account", icon: "👤" },
@@ -34,145 +34,149 @@ export default function StudentDashboard({
   const progress = student.lessonProgress ?? 1;
 
   return (
-    <div className="flex min-h-screen bg-slate-900">
+    <div className="flex min-h-screen" style={{ background: "#F1F5F9", fontFamily: "Inter, sans-serif" }}>
       {/* Mobile overlay */}
       {mobileOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
-          onClick={() => setMobileOpen(false)}
-        />
+        <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={() => setMobileOpen(false)} />
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed top-0 left-0 z-50 h-full w-60 bg-slate-800 border-r border-slate-700 flex flex-col transition-transform duration-200
-        ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:h-screen`}>
-        <div className="flex items-center gap-3 px-5 py-6 border-b border-slate-700">
-          <img src="/images/LogoV1.png" alt="Orcanomics" className="h-9 w-9 rounded-xl object-contain" />
-          <div>
-            <p className="font-extrabold tracking-tight text-cyan-400">Orcanomics</p>
-            <p className="text-xs text-slate-400">Student Portal</p>
-          </div>
+      <aside className={`fixed top-0 left-0 z-50 h-full w-64 flex flex-col transition-transform duration-200
+        ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:h-screen`}
+        style={{ background: "#0F172A" }}>
+        
+        {/* Logo */}
+        <div className="flex items-center gap-3 px-6 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+          <img src="/images/LogoV1.png" alt="Orcanomics" className="h-10 w-10 rounded-xl object-contain" />
+          <span style={{ fontFamily: "Orbitron, sans-serif", fontWeight: 800, color: "white", fontSize: "1.1rem" }}>Orcanomics</span>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-1">
+        {/* Nav */}
+        <nav className="flex-1 px-4 py-5 space-y-1">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition
-                ${item.active
-                  ? "bg-cyan-600 text-white"
-                  : "text-slate-300 hover:bg-slate-700"
-                }`}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all"
+              style={{
+                color: item.active ? "white" : "#94A3B8",
+                background: item.active ? "rgba(255,255,255,0.08)" : "transparent",
+                borderLeft: item.active ? "3px solid #0284C7" : "3px solid transparent",
+              }}
             >
-              <span>{item.icon}</span>
+              <span style={{ fontSize: "1rem" }}>{item.icon}</span>
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="px-3 py-4 border-t border-slate-700">
+        {/* Sign out */}
+        <div className="px-4 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
           <Link
             href="/api/student/logout"
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-400 hover:bg-red-900/30 hover:text-red-400 transition"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all"
+            style={{ color: "#94A3B8" }}
+            onMouseOver={e => (e.currentTarget.style.color = "#EF4444")}
+            onMouseOut={e => (e.currentTarget.style.color = "#94A3B8")}
           >
-            <span>→</span>
-            Sign Out
+            <span>⮞</span> Logout
           </Link>
         </div>
       </aside>
 
-      {/* Main content */}
+      {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile header */}
-        <header className="md:hidden flex items-center justify-between bg-slate-800 border-b border-slate-700 px-4 py-3">
-          <button onClick={() => setMobileOpen(true)} className="text-white text-xl">☰</button>
-          <p className="font-bold text-cyan-400">Orcanomics</p>
-          <div className="text-sm font-bold text-yellow-400">🪙 {coins}</div>
+        <header className="md:hidden flex items-center justify-between px-4 py-3" style={{ background: "#0F172A", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+          <button onClick={() => setMobileOpen(true)} style={{ color: "white", fontSize: "1.4rem", background: "none", border: "none", cursor: "pointer" }}>☰</button>
+          <span style={{ fontFamily: "Orbitron, sans-serif", fontWeight: 800, color: "white" }}>Orcanomics</span>
+          <span style={{ color: "#FFD700", fontWeight: "bold", fontSize: "0.9rem" }}>🪙 {coins}</span>
         </header>
 
-        {/* Top bar */}
-        <div className="hidden md:flex items-center justify-between bg-slate-800 border-b border-slate-700 px-8 py-4">
-          <div>
-            <h1 className="text-xl font-extrabold text-white">
-              Welcome back, <span className="text-cyan-400">{displayName}</span>!
-            </h1>
-            <p className="text-sm text-slate-400">{className}</p>
-          </div>
-          <div className="flex items-center gap-4">
-            {student.isPremium && (
-              <span className="rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-slate-900">
-                ⭐ Orca Gold
-              </span>
-            )}
-            <div className="rounded-xl bg-slate-700 border border-slate-600 px-4 py-2 text-sm font-bold text-yellow-400">
-              🪙 {coins} Coins
-            </div>
-          </div>
-        </div>
+        <main className="flex-1 p-6 md:p-10 space-y-6">
 
-        {/* Dashboard content */}
-        <main className="flex-1 p-6 md:p-8 space-y-6">
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="rounded-2xl bg-slate-800 border border-slate-700 px-5 py-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Coins</p>
-              <p className="mt-1 text-3xl font-extrabold text-yellow-400">{coins}</p>
+          {/* Profile card */}
+          <div className="rounded-2xl bg-white p-6 flex items-center justify-between" style={{ border: "1px solid #E2E8F0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
+            <div>
+              <h1 style={{ fontFamily: "Orbitron, sans-serif", fontSize: "2rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>{displayName}</h1>
+              {student.isPremium && (
+                <p style={{ color: "#FFD700", fontWeight: 700, fontSize: "0.85rem", marginTop: "4px" }}>
+                  ORCA GOLD MEMBER 👑
+                </p>
+              )}
+              <p style={{ color: "#64748B", fontSize: "0.9rem", marginTop: "4px" }}>{className}</p>
             </div>
-            <div className="rounded-2xl bg-slate-800 border border-slate-700 px-5 py-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Lesson</p>
-              <p className="mt-1 text-3xl font-extrabold text-cyan-400">{progress}</p>
-            </div>
-            <div className="rounded-2xl bg-slate-800 border border-slate-700 px-5 py-4 col-span-2 md:col-span-1">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Status</p>
-              <p className="mt-1 text-sm font-bold text-green-400">● Active</p>
+            <div style={{
+              width: 80, height: 80, borderRadius: "50%",
+              border: "3px solid #0284C7",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "2.5rem", background: "#F1F5F9", overflow: "hidden"
+            }}>
+              {student.avatar ? <img src={student.avatar} alt="avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : "🦈"}
             </div>
           </div>
 
-          {/* Quick actions */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link href="/student/practice" className="rounded-2xl bg-cyan-600 hover:bg-cyan-700 transition p-6 text-white">
-              <p className="text-2xl mb-2">🎮</p>
-              <p className="font-bold text-lg">Practice</p>
-              <p className="text-sm text-cyan-100 mt-1">Earn coins while you learn</p>
-            </Link>
-            <Link href="/student/classroom" className="rounded-2xl bg-teal-600 hover:bg-teal-700 transition p-6 text-white">
-              <p className="text-2xl mb-2">🏫</p>
-              <p className="font-bold text-lg">Classroom</p>
-              <p className="text-sm text-teal-100 mt-1">View your class leaderboard</p>
-            </Link>
-            <Link href="/student/shop" className="rounded-2xl bg-violet-600 hover:bg-violet-700 transition p-6 text-white">
-              <p className="text-2xl mb-2">🛒</p>
-              <p className="font-bold text-lg">Shop</p>
-              <p className="text-sm text-violet-100 mt-1">Spend your coins</p>
-            </Link>
-          </div>
-
-          {/* Current mission */}
-          <div className="rounded-2xl bg-slate-800 border border-slate-700 p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Current Mission</h2>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-cyan-400">Lesson {progress}</p>
-                <p className="text-sm text-slate-400 mt-1">Keep going to earn more coins and unlock new items.</p>
+          {/* Treasury + Education */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Treasury */}
+            <div className="rounded-2xl overflow-hidden bg-white" style={{ border: "1px solid #E2E8F0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
+              <div className="flex items-center justify-between px-5 py-4" style={{ background: "#0D9488" }}>
+                <span style={{ fontFamily: "Orbitron, sans-serif", fontWeight: 700, color: "white", fontSize: "0.85rem", letterSpacing: "0.1em" }}>TREASURY</span>
+                <span style={{ fontSize: "1.2rem" }}>🪙</span>
               </div>
+              <div className="px-5 py-5">
+                <p style={{ fontSize: "2rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>{coins.toLocaleString()} Coins</p>
+                <p style={{ color: "#64748B", marginTop: "6px", fontSize: "0.9rem" }}>Current Lesson: {progress}</p>
+              </div>
+            </div>
+
+            {/* Education */}
+            <div className="rounded-2xl overflow-hidden bg-white" style={{ border: "1px solid #E2E8F0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
+              <div className="flex items-center justify-between px-5 py-4" style={{ background: "#0284C7" }}>
+                <span style={{ fontFamily: "Orbitron, sans-serif", fontWeight: 700, color: "white", fontSize: "0.85rem", letterSpacing: "0.1em" }}>EDUCATION</span>
+                <span style={{ fontSize: "1.2rem" }}>🏛</span>
+              </div>
+              <div className="px-5 py-5">
+                <p style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>Active Class</p>
+                <p style={{ color: "#64748B", marginTop: "6px", fontSize: "0.9rem", marginBottom: "16px" }}>Review your materials and grades.</p>
+                <Link
+                  href="/student/classroom"
+                  className="block w-full text-center py-3 rounded-xl font-bold text-sm text-white transition"
+                  style={{ background: "#0F172A", fontFamily: "Orbitron, sans-serif", fontSize: "0.8rem", letterSpacing: "0.05em" }}
+                >
+                  GO TO CLASS
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick links */}
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { label: "Practice", href: "/student/practice", icon: "🎮", color: "#F97316" },
+              { label: "Shop", href: "/student/shop", icon: "🛒", color: "#0D9488" },
+              { label: "Settings", href: "/student/settings", icon: "⚙️", color: "#64748B" },
+            ].map((item) => (
               <Link
-                href="/student/practice"
-                className="rounded-xl bg-cyan-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-cyan-700 transition"
+                key={item.href}
+                href={item.href}
+                className="rounded-2xl bg-white flex flex-col items-center justify-center py-6 gap-2 transition hover:-translate-y-1"
+                style={{ border: "1px solid #E2E8F0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)", textDecoration: "none" }}
               >
-                Continue →
+                <span style={{ fontSize: "1.8rem", color: item.color }}>{item.icon}</span>
+                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#1E293B" }}>{item.label}</span>
               </Link>
+            ))}
+          </div>
+
+          {/* Progress */}
+          <div className="rounded-2xl bg-white p-6" style={{ border: "1px solid #E2E8F0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
+            <h2 style={{ fontFamily: "Orbitron, sans-serif", fontWeight: 700, color: "#0F172A", marginTop: 0, fontSize: "1rem" }}>Unit Progress</h2>
+            <div style={{ background: "#F1F5F9", borderRadius: "999px", height: "10px", marginTop: "12px", overflow: "hidden" }}>
+              <div style={{ width: `${Math.min(100, (progress / 18) * 100)}%`, height: "100%", background: "#0284C7", borderRadius: "999px", transition: "width 1s ease" }} />
             </div>
-            {/* Progress bar */}
-            <div className="mt-4 h-2 w-full rounded-full bg-slate-700">
-              <div
-                className="h-2 rounded-full bg-cyan-500 transition-all"
-                style={{ width: `${Math.min(100, (progress / 18) * 100)}%` }}
-              />
-            </div>
-            <p className="mt-1 text-xs text-slate-500">Lesson {progress} of 18</p>
+            <p style={{ color: "#64748B", fontSize: "0.85rem", marginTop: "8px" }}>Lesson {progress} of 18</p>
           </div>
 
         </main>
