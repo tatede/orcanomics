@@ -8,19 +8,28 @@ export default function StudentLoginPage() {
   const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
+    console.log("handleLogin called", username, password);
     setLoading(true);
     setError("");
-    const res = await fetch("/api/student/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      window.location.href = "/student/dashboard";
-    } else {
-      setError(data.message || "Invalid username or password");
+    try {
+      const res = await fetch("/api/student/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      console.log("response status:", res.status);
+      const data = await res.json();
+      console.log("response data:", data);
+      if (res.ok) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        window.location.href = "/student/dashboard";
+      } else {
+        setError(data.message || "Invalid username or password");
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error("fetch error:", err);
+      setError("Network error, please try again");
       setLoading(false);
     }
   }
