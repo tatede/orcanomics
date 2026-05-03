@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     return Response.json({ message: "Invalid username or password" }, { status: 401 });
   }
 
-  // Check plain password OR hash
+  // Check plain password OR hash f
   const validHash = await bcrypt.compare(password, student.passwordHash);
   const validPlain = password === student.password;
   
