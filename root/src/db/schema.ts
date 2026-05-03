@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, integer, boolean, jsonb } from "drizzle-orm/pg-core";
 
 export const teachers = pgTable("teachers", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -21,5 +21,12 @@ export const students = pgTable("students", {
   password: text("password").notNull(),
   passwordHash: text("password_hash").notNull(),
   classId: uuid("class_id").notNull().references(() => classes.id, { onDelete: "cascade" }),
+  displayName: text("display_name"),
+  coins: integer("coins").default(0),
+  avatar: text("avatar"),
+  inventory: text("inventory").array().default([]),
+  isPremium: boolean("is_premium").default(false),
+  lessonProgress: integer("lesson_progress").default(1),
+  highScores: jsonb("high_scores").default({}),
   createdAt: timestamp("created_at").defaultNow(),
 });
