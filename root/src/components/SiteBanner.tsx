@@ -5,9 +5,15 @@ export default function SiteBanner() {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/admin/message")
-      .then((r) => r.json())
-      .then((d) => setMessage(d.message));
+    function fetchMessage() {
+      fetch("/api/admin/message")
+        .then((r) => r.json())
+        .then((d) => setMessage(d.message));
+    }
+
+    fetchMessage();
+    const interval = setInterval(fetchMessage, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   if (!message) return null;
