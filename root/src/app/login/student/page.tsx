@@ -1,8 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function StudentLoginPage() {
-  const [error, setError] = useState("");
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error");
+
+  const errorMessage = error === "invalid" ? "Invalid username or password"
+    : error === "missing" ? "Please enter username and password"
+    : error === "server" ? "Server error, please try again"
+    : null;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-stone-50">
@@ -16,9 +23,9 @@ export default function StudentLoginPage() {
           <h1 className="mt-3 text-xl font-bold text-slate-900">Student Sign In</h1>
           <p className="mt-1 text-sm text-slate-500">Enter your username and password</p>
         </div>
-        {error && (
+        {errorMessage && (
           <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
+            {errorMessage}
           </div>
         )}
         <form method="POST" action="/api/student/login" className="space-y-4">
@@ -51,5 +58,13 @@ export default function StudentLoginPage() {
         </form>
       </div>
     </main>
+  );
+}
+
+export default function StudentLoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }
