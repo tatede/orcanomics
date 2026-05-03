@@ -22,7 +22,9 @@ export async function POST(req: Request) {
   }
 
   const cookieStore = await cookies();
-  cookieStore.set("student_id", student.id, {
+  cookieStore.set({
+    name: "student_id",
+    value: student.id,
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
