@@ -24,9 +24,10 @@ export async function POST(req: Request) {
   const cookieStore = await cookies();
   cookieStore.set("student_id", student.id, {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 60 * 24 * 30,
+    path: "/",
   });
 
   return Response.json({ ok: true });
