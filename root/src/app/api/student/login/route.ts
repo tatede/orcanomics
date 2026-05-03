@@ -2,16 +2,14 @@ import { db } from "@/db";
 import { students } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
     const { username, password } = await req.json();
 
     if (!username || !password) {
-      return new Response(JSON.stringify({ message: "Missing fields" }), {
-        status: 400,
-      });
+      return NextResponse.json({ message: "Missing fields" }, { status: 400 });
     }
 
     const [student] = await db
@@ -20,38 +18,30 @@ export async function POST(req: Request) {
       .where(eq(students.username, username));
 
     if (!student) {
-      return new Response(JSON.stringify({ message: "Invalid" }), {
-        status: 401,
-      });
+      return NextResponse.json({ message: "Invalid username or password" }, { status: 401 });
     }
 
-    // ✅ ONLY hashed password check (secure)
-    const valid = await bcrypt.compare(password, student.passwordHash);
+    const validHash = await bcrypt.compare(password, student.passwordHash);
+    const validPlain = password === student.password;
 
-    if (!valid) {
-      return new Response(JSON.stringify({ message: "Invalid" }), {
-        status: 401,
-      });
+    if (!validHash && !validPlain) {
+      return NextResponse.json({ message: "Invalid username or password" }, { status: 401 });
     }
 
-    // ✅ Set cookie properly (works in dev + prod)
-    const cookieStore = cookies();
+    const response = NextResponse.json({ ok: true, id: student.id });
 
-    cookieStore.set("student_id", String(student.id), {
+    response.cookies.set("student_id", student.id, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // 🔑 KEY FIX
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 30, // 30 days
+      maxAge: 60 * 60 * 24 * 30,
     });
 
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-    });
+    return response;
+
   } catch (err) {
     console.error(err);
-    return new Response(JSON.stringify({ message: "Server error" }), {
-      status: 500,
-    });
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
