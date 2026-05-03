@@ -6,10 +6,12 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { username, password } = await req.json();
+    const formData = await req.formData();
+    const username = formData.get("username") as string;
+    const password = formData.get("password") as string;
 
     if (!username || !password) {
-      return NextResponse.json({ message: "Missing fields" }, { status: 400 });
+      return NextResponse.redirect(new URL("/login/student?error=missing", req.url));
     }
 
     const [student] = await db
@@ -18,19 +20,17 @@ export async function POST(req: Request) {
       .where(eq(students.username, username));
 
     if (!student) {
-      return NextResponse.json({ message: "Invalid username or password" }, { status: 401 });
+      return NextResponse.redirect(new URL("/login/student?error=invalid", req.url));
     }
 
     const validHash = await bcrypt.compare(password, student.passwordHash);
     const validPlain = password === student.password;
 
     if (!validHash && !validPlain) {
-      return NextResponse.json({ message: "Invalid username or password" }, { status: 401 });
+      return NextResponse.redirect(new URL("/login/student?error=invalid", req.url));
     }
 
-    const response = NextResponse.redirect(
-      new URL("/student/dashboard", req.url)
-    );
+    const response = NextResponse.redirect(new URL("/student/dashboard", req.url));
 
     response.cookies.set("student_id", student.id, {
       httpOnly: true,
@@ -44,6 +44,6 @@ export async function POST(req: Request) {
 
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return NextResponse.redirect(new URL("/login/student?error=server", req.url));
   }
 }
