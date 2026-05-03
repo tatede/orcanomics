@@ -28,5 +28,6 @@ export const students = pgTable("students", {
   isPremium: boolean("is_premium").default(false),
   lessonProgress: integer("lesson_progress").default(1),
   highScores: jsonb("high_scores").default({}),
+  grade: text("grade").default("3"),
   createdAt: timestamp("created_at").defaultNow(),
 });
