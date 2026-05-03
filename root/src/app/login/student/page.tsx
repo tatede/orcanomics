@@ -1,9 +1,7 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function StudentLoginPage() {
-  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -19,11 +17,11 @@ export default function StudentLoginPage() {
     });
     const data = await res.json();
     if (res.ok) {
-      router.push("/student/dashboard");
+      window.location.href = "/student/dashboard";
     } else {
       setError(data.message || "Invalid username or password");
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (
@@ -38,13 +36,11 @@ export default function StudentLoginPage() {
           <h1 className="mt-3 text-xl font-bold text-slate-900">Student Sign In</h1>
           <p className="mt-1 text-sm text-slate-500">Enter your username and password</p>
         </div>
-
         {error && (
           <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
           </div>
         )}
-
         <div className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Username</label>
