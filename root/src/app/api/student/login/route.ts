@@ -23,11 +23,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Invalid username or password" }, { status: 401 });
   }
 
-  const response = NextResponse.json({ ok: true });
-  
+  const response = NextResponse.json({ ok: true }, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, private",
+    }
+  });
+
   response.cookies.set("student_id", student.id, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
     sameSite: "lax",
     maxAge: 60 * 60 * 24 * 30,
     path: "/",
