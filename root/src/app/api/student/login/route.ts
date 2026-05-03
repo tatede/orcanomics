@@ -2,7 +2,6 @@ import { db } from "@/db";
 import { students } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   const { username, password } = await req.json();
@@ -16,22 +15,18 @@ export async function POST(req: Request) {
     return Response.json({ message: "Invalid username or password" }, { status: 401 });
   }
 
-  // Check plain password OR hash f
   const validHash = await bcrypt.compare(password, student.passwordHash);
   const validPlain = password === student.password;
-  
+
   if (!validHash && !validPlain) {
     return Response.json({ message: "Invalid username or password" }, { status: 401 });
   }
 
-  const cookieStore = await cookies();
-  cookieStore.set("student_id", student.id, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    maxAge: 60 * 60 * 24 * 30,
-    path: "/",
-  });
-
-  return Response.json({ ok: true });
+  const response = Response.json({ ok: true });
+  
+  const cookieValue = `student_id=${student.id}; Path=/; Max-Age=${60 * 60 * 24 * 30}; HttpOnly; SameSite=Lax`;
+  
+  response.headers.set("Set-Cookie", cookieValue);
+  
+  return response;
 }
