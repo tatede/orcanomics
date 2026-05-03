@@ -8,7 +8,6 @@ export default function StudentLoginPage() {
   const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
-    console.log("handleLogin called", username, password);
     setLoading(true);
     setError("");
     try {
@@ -17,9 +16,7 @@ export default function StudentLoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
-      console.log("response status:", res.status);
       const data = await res.json();
-      console.log("response data:", data);
       if (res.ok) {
         await new Promise(resolve => setTimeout(resolve, 100));
         window.location.href = "/student/dashboard";
@@ -51,7 +48,7 @@ export default function StudentLoginPage() {
             {error}
           </div>
         )}
-        <div className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Username</label>
             <input
@@ -60,6 +57,7 @@ export default function StudentLoginPage() {
               onChange={(e) => setUsername(e.target.value)}
               className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
               placeholder="Enter your username"
+              autoComplete="username"
             />
           </div>
           <div>
@@ -70,17 +68,17 @@ export default function StudentLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none"
               placeholder="Enter your password"
-              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+              autoComplete="current-password"
             />
           </div>
           <button
-            onClick={handleLogin}
+            type="submit"
             disabled={loading}
             className="w-full rounded-lg bg-cyan-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-cyan-800 disabled:opacity-50"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
-        </div>
+        </form>
       </div>
     </main>
   );
