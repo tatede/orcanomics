@@ -17,6 +17,7 @@ export default function StudentLoginPage() {
     });
     const data = await res.json();
     if (res.ok) {
+      await new Promise(resolve => setTimeout(resolve, 100));
       window.location.href = "/student/dashboard";
     } else {
       setError(data.message || "Invalid username or password");
