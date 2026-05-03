@@ -28,7 +28,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Invalid username or password" }, { status: 401 });
     }
 
-    const response = NextResponse.json({ ok: true, id: student.id });
+    const response = NextResponse.redirect(
+      new URL("/student/dashboard", req.url)
+    );
 
     response.cookies.set("student_id", student.id, {
       httpOnly: true,
