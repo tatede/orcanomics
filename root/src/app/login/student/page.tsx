@@ -3,44 +3,6 @@ import { useState } from "react";
 
 export default function StudentLoginPage() {
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    const form = e.currentTarget;
-    const username = (form.elements.namedItem("username") as HTMLInputElement).value;
-    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
-
-    try {
-      const res = await fetch("/api/student/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        // Use a form post to navigate — this preserves cookies
-        const redirectForm = document.createElement("form");
-        redirectForm.method = "GET";
-        redirectForm.action = "/student/dashboard";
-        document.body.appendChild(redirectForm);
-        redirectForm.submit();
-      } else {
-        setError(data.message || "Invalid username or password");
-        setLoading(false);
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Network error, please try again");
-      setLoading(false);
-    }
-  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-stone-50">
@@ -59,7 +21,7 @@ export default function StudentLoginPage() {
             {error}
           </div>
         )}
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form method="POST" action="/api/student/login" className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Username</label>
             <input
@@ -82,10 +44,9 @@ export default function StudentLoginPage() {
           </div>
           <button
             type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-cyan-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-cyan-800 disabled:opacity-50"
+            className="w-full rounded-lg bg-cyan-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-cyan-800"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            Sign In
           </button>
         </form>
       </div>
