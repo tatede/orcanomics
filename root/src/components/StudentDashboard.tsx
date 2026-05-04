@@ -104,15 +104,15 @@ export default function StudentDashboard({
         </nav>
 
         <div className="px-4 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-          <Link
-            href="/api/student/logout"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium"
-            style={{ color: "#94A3B8" }}
+          <button
+            onClick={() => window.location.href = "/api/student/logout"}
+            className="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium"
+            style={{ color: "#94A3B8", background: "none", border: "none", cursor: "pointer" }}
             onMouseOver={e => (e.currentTarget.style.color = "#EF4444")}
             onMouseOut={e => (e.currentTarget.style.color = "#94A3B8")}
           >
             <span>⮞</span> Logout
-          </Link>
+          </button>
         </div>
       </aside>
 
