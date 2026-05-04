@@ -1,3 +1,4 @@
+
 "use client";
 import Link from "next/link";
 import { useState } from "react";
@@ -33,7 +34,6 @@ export default function StudentClassroom({
 
   const sorted = [...classmates].sort((a, b) => (b.coins ?? 0) - (a.coins ?? 0));
   const top3 = sorted.slice(0, 3);
-  const rest = sorted.slice(3);
 
   const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
 
@@ -75,15 +75,15 @@ export default function StudentClassroom({
           ))}
         </nav>
         <div className="px-4 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-          <Link
-            href="/api/student/logout"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium"
-            style={{ color: "#94A3B8" }}
+          <button
+            onClick={() => window.location.href = "/api/student/logout"}
+            className="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium"
+            style={{ color: "#94A3B8", background: "none", border: "none", cursor: "pointer" }}
             onMouseOver={e => (e.currentTarget.style.color = "#EF4444")}
             onMouseOut={e => (e.currentTarget.style.color = "#94A3B8")}
           >
             <span>⮞</span> Logout
-          </Link>
+          </button>
         </div>
       </aside>
 
@@ -95,13 +95,11 @@ export default function StudentClassroom({
         </header>
 
         <main className="flex-1 p-6 md:p-8 space-y-8">
-          {/* Header */}
           <div className="rounded-2xl bg-white p-6" style={{ border: "1px solid #E2E8F0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
             <h1 style={{ fontFamily: "Orbitron, sans-serif", fontSize: "1.5rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>{className}</h1>
             <p style={{ color: "#64748B", marginTop: "4px" }}>{classmates.length} students enrolled</p>
           </div>
 
-          {/* Podium */}
           {top3.length > 0 && (
             <div>
               <h2 style={{ fontFamily: "Orbitron, sans-serif", fontWeight: 700, fontSize: "1.1rem", color: "#0F172A", borderLeft: "4px solid #FFD700", paddingLeft: "12px", marginBottom: "24px" }}>
@@ -143,7 +141,6 @@ export default function StudentClassroom({
             </div>
           )}
 
-          {/* Roster */}
           <div>
             <h2 style={{ fontFamily: "Orbitron, sans-serif", fontWeight: 700, fontSize: "1.1rem", color: "#0F172A", borderLeft: "4px solid #0284C7", paddingLeft: "12px", marginBottom: "16px" }}>
               👥 Class Roster
