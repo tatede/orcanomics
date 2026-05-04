@@ -1,3 +1,4 @@
+
 "use client";
 import Link from "next/link";
 import { useState } from "react";
@@ -42,7 +43,7 @@ export default function StudentAccount({
       <aside className={`fixed top-0 left-0 z-50 h-full w-64 flex flex-col transition-transform duration-200
         ${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:h-screen`}
         style={{ background: "#0F172A" }}>
-        
+
         <div className="flex items-center gap-3 px-6 py-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
           <img src="/images/LogoV1.png" alt="Orcanomics" className="h-10 w-10 rounded-xl object-contain" />
           <span style={{ fontFamily: "Orbitron, sans-serif", fontWeight: 800, color: "white", fontSize: "1.1rem" }}>Orcanomics</span>
@@ -68,15 +69,15 @@ export default function StudentAccount({
         </nav>
 
         <div className="px-4 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-          <Link
-            href="/api/student/logout"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all"
-            style={{ color: "#94A3B8" }}
+          <button
+            onClick={() => window.location.href = "/api/student/logout"}
+            className="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium"
+            style={{ color: "#94A3B8", background: "none", border: "none", cursor: "pointer" }}
             onMouseOver={e => (e.currentTarget.style.color = "#EF4444")}
             onMouseOut={e => (e.currentTarget.style.color = "#94A3B8")}
           >
             <span>⮞</span> Logout
-          </Link>
+          </button>
         </div>
       </aside>
 
