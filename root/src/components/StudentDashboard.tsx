@@ -23,13 +23,13 @@ export default function StudentDashboard({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [gameCode, setGameCode] = useState("");
 
-  const navItems = [
-    { label: "Dashboard", href: "/student/dashboard", icon: "⊞", active: true },
-    { label: "Classroom", href: "/student/classroom", icon: "🖥" },
-    { label: "Practice", href: "/student/practice", icon: "🎮" },
-    { label: "Shop", href: "/student/shop", icon: "🛒" },
-    { label: "Account", href: "/student/account", icon: "👤" },
-  ];
+ const navItems: { label: string; href: string; icon: React.ReactNode; active?: boolean }[] = [
+  { label: "Dashboard", href: "/student/dashboard", icon: <i className="fas fa-th-large" /> },
+  { label: "Classroom", href: "/student/classroom", icon: <i className="fas fa-chalkboard-teacher" /> },
+  { label: "Practice", href: "/student/practice", icon: <i className="fas fa-gamepad" /> },
+  { label: "Shop", href: "/student/shop", icon: <i className="fas fa-shopping-cart" /> },
+  { label: "Account", href: "/student/account", icon: <i className="fas fa-user-circle" />, active: true },
+];
 
   const displayName = student.displayName ?? student.username;
   const coins = student.coins ?? 0;
