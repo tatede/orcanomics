@@ -91,8 +91,11 @@ export default function SupportWidget() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const isLoggedIn = !!studentId || !!session?.user?.email;
+  const displayName = session?.user?.name ?? (studentId ? "Student" : "there");
+
   async function startChat() {
-    if (!topic) return;
+    if (!isLoggedIn || !topic) return;
     setLoading(true);
     const res = await fetch("/api/support/tickets", {
       method: "POST",
@@ -126,40 +129,58 @@ export default function SupportWidget() {
     setMessages(data);
   }
 
-  const isLoggedIn = !!studentId || !!session?.user?.email;
-  const displayName = session?.user?.name ?? (studentId ? "Student" : "there");
-
   return (
     <>
-      {/* Floating button */}
+      {/* Floating button — explicit top:auto/left:auto to prevent layout interference */}
       <button
         onClick={() => setOpen(!open)}
         style={{
-          position: "fixed", bottom: 24, right: 24, zIndex: 50,
-          width: 56, height: 56, borderRadius: "50%",
-          background: "#0284C7", border: "none", cursor: "pointer",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+          position: "fixed",
+          bottom: "24px",
+          right: "24px",
+          top: "auto",
+          left: "auto",
+          zIndex: 9999,
+          width: 56,
+          height: 56,
+          borderRadius: "50%",
+          background: "#0284C7",
+          border: "none",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
         }}
       >
         {open ? (
           <svg width="24" height="24" viewBox="0 0 24 24">
-            <path d="M18 6L6 18M6 6l12 12" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M18 6L6 18M6 6l12 12" stroke="white" strokeWidth="2" strokeLinecap="round" />
           </svg>
         ) : (
           <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
         {unread > 0 && !open && (
-          <span style={{
-            position: "absolute", top: -4, right: -4,
-            background: "#EF4444", color: "white",
-            borderRadius: "999px", width: "20px", height: "20px",
-            fontSize: "0.7rem", fontWeight: 700,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            border: "2px solid white"
-          }}>
+          <span
+            style={{
+              position: "absolute",
+              top: -4,
+              right: -4,
+              background: "#EF4444",
+              color: "white",
+              borderRadius: "999px",
+              width: "20px",
+              height: "20px",
+              fontSize: "0.7rem",
+              fontWeight: 700,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "2px solid white",
+            }}
+          >
             {unread}
           </span>
         )}
@@ -167,13 +188,24 @@ export default function SupportWidget() {
 
       {/* Widget */}
       {open && (
-        <div style={{
-          position: "fixed", bottom: 96, right: 24, zIndex: 50,
-          width: 320, height: 520, borderRadius: 16,
-          overflow: "hidden", boxShadow: "0 8px 30px rgba(0,0,0,0.15)",
-          display: "flex", flexDirection: "column", background: "white"
-        }}>
-
+        <div
+          style={{
+            position: "fixed",
+            bottom: "96px",
+            right: "24px",
+            top: "auto",
+            left: "auto",
+            zIndex: 9999,
+            width: 320,
+            height: 520,
+            borderRadius: 16,
+            overflow: "hidden",
+            boxShadow: "0 8px 30px rgba(0,0,0,0.15)",
+            display: "flex",
+            flexDirection: "column",
+            background: "white",
+          }}
+        >
           {/* Header */}
           <div style={{ background: "#0284C7", padding: "16px 20px", display: "flex", alignItems: "center", gap: 12 }}>
             {step !== "history" && (
@@ -198,7 +230,9 @@ export default function SupportWidget() {
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, textAlign: "center", padding: "0 16px" }}>
                   <div style={{ fontSize: "3rem" }}>🔒</div>
                   <p style={{ fontWeight: 700, color: "#0F172A", margin: 0 }}>Sign in required</p>
-                  <p style={{ fontSize: "0.85rem", color: "#64748B", margin: 0 }}>You must be signed in as a student or teacher to access support.</p>
+                  <p style={{ fontSize: "0.85rem", color: "#64748B", margin: 0 }}>
+                    You must be signed in as a student or teacher to access support.
+                  </p>
                   <a
                     href="/login/student"
                     style={{ width: "100%", background: "#0284C7", color: "white", padding: "12px", borderRadius: 10, fontWeight: 700, fontSize: "0.85rem", textAlign: "center", textDecoration: "none", display: "block" }}
@@ -224,7 +258,9 @@ export default function SupportWidget() {
                   </button>
                   {tickets.length > 0 && (
                     <>
-                      <p style={{ fontSize: "0.7rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.05em", margin: "8px 0 0" }}>Previous Conversations</p>
+                      <p style={{ fontSize: "0.7rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.05em", margin: "8px 0 0" }}>
+                        Previous Conversations
+                      </p>
                       {tickets.map(ticket => (
                         <div
                           key={ticket.id}
@@ -236,12 +272,14 @@ export default function SupportWidget() {
                             <span style={{
                               fontSize: "0.65rem", fontWeight: 700, padding: "2px 8px", borderRadius: 999,
                               background: ticket.status === "open" ? "#DCFCE7" : "#F1F5F9",
-                              color: ticket.status === "open" ? "#059669" : "#64748B"
+                              color: ticket.status === "open" ? "#059669" : "#64748B",
                             }}>
                               {ticket.status}
                             </span>
                           </div>
-                          <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "#94A3B8" }}>{new Date(ticket.created_at).toLocaleDateString()}</p>
+                          <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "#94A3B8" }}>
+                            {new Date(ticket.created_at).toLocaleDateString()}
+                          </p>
                         </div>
                       ))}
                     </>
@@ -251,15 +289,17 @@ export default function SupportWidget() {
             </div>
           )}
 
-          {/* Info step */}
-          {step === "info" && (
+          {/* Info step — topic only, no name/email fields */}
+          {step === "info" && isLoggedIn && (
             <div style={{ flex: 1, overflowY: "auto", padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
               <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 10, padding: 12 }}>
                 <p style={{ margin: 0, fontWeight: 600, color: "#059669", fontSize: "0.85rem" }}>✓ Signed in as {displayName}</p>
                 <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "#16A34A" }}>Your conversation will be saved to your account</p>
               </div>
               <div>
-                <p style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 8px" }}>Select a Topic</p>
+                <p style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 8px" }}>
+                  Select a Topic
+                </p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {topics.map(t => (
                     <button
@@ -269,7 +309,7 @@ export default function SupportWidget() {
                         padding: "6px 12px", borderRadius: 999, fontSize: "0.75rem", fontWeight: 600, cursor: "pointer",
                         background: topic === t ? "#0284C7" : "#F1F5F9",
                         color: topic === t ? "white" : "#475569",
-                        border: topic === t ? "none" : "1px solid #E2E8F0"
+                        border: topic === t ? "none" : "1px solid #E2E8F0",
                       }}
                     >
                       {t}
@@ -283,7 +323,7 @@ export default function SupportWidget() {
                 style={{
                   background: "#0284C7", color: "white", padding: "12px", borderRadius: 10,
                   fontWeight: 700, fontSize: "0.85rem", border: "none", cursor: "pointer",
-                  opacity: !topic || loading ? 0.5 : 1
+                  opacity: !topic || loading ? 0.5 : 1,
                 }}
               >
                 {loading ? "Starting..." : "Start Chat →"}
@@ -309,7 +349,7 @@ export default function SupportWidget() {
                       maxWidth: "85%", padding: "10px 14px", fontSize: "0.85rem",
                       background: msg.sender === "customer" ? "#0284C7" : "#E2E8F0",
                       color: msg.sender === "customer" ? "white" : "#1E293B",
-                      borderRadius: msg.sender === "customer" ? "18px 18px 4px 18px" : "18px 18px 18px 4px"
+                      borderRadius: msg.sender === "customer" ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
                     }}>
                       {msg.message}
                     </div>
