@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { cookies } from "next/headers";
 import { db } from "@/db";
+import { sql } from "drizzle-orm";
 import { students, teachers } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -35,7 +36,6 @@ export async function POST(req: Request) {
     }
   }
 
-  const { sql } = await import("drizzle-orm");
   const result = await db.execute(
     sql`INSERT INTO support_tickets (name, email, topic, student_id, teacher_email) 
         VALUES (${name}, ${email}, ${topic}, ${studentId}, ${teacherEmail}) 
@@ -49,7 +49,6 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const studentId = searchParams.get("studentId");
   const teacherEmail = searchParams.get("teacherEmail");
-  const { sql } = await import("drizzle-orm");
 
   if (studentId) {
     const result = await db.execute(
