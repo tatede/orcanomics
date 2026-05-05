@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import Providers from "@/components/SessionProvider";
 import SiteBanner from "@/components/SiteBanner";
+import SupportWidget from "@/components/SupportWidget";
 
 export const metadata: Metadata = {
   title: "Orcanomics | Financial Learning for K–8",
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="bg-slate-100 text-slate-900 antialiased">
         <Providers>
           <SiteBanner />
+          <SupportWidget />
           {children}
         </Providers>
       </body>
