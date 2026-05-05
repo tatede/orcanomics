@@ -27,9 +27,7 @@ type Ticket = {
 export default function SupportWidget() {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState<"history" | "info" | "topic" | "chat">("history");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [step, setStep] = useState<"history" | "info" | "chat">("history");
   const [topic, setTopic] = useState("");
   const [ticketId, setTicketId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -39,14 +37,13 @@ export default function SupportWidget() {
   const [unread, setUnread] = useState(0);
   const [lastSeen, setLastSeen] = useState<Record<string, number>>({});
   const bottomRef = useRef<HTMLDivElement>(null);
-
   const [studentId, setStudentId] = useState<string | null>(null);
+
   useEffect(() => {
     const match = document.cookie.match(/student_id=([^;]+)/);
     if (match) setStudentId(match[1]);
   }, []);
 
-  // Load previous tickets
   useEffect(() => {
     if (!open) return;
     async function loadTickets() {
@@ -63,7 +60,6 @@ export default function SupportWidget() {
     loadTickets();
   }, [open, studentId, session]);
 
-  // Poll messages
   useEffect(() => {
     if (!ticketId) return;
     async function fetchMessages() {
@@ -76,7 +72,6 @@ export default function SupportWidget() {
     return () => clearInterval(interval);
   }, [ticketId]);
 
-  // Count unread agent messages
   useEffect(() => {
     if (!ticketId || open) return;
     const agentMessages = messages.filter(m => m.sender === "agent");
@@ -85,7 +80,6 @@ export default function SupportWidget() {
     setUnread(unreadCount);
   }, [messages, ticketId, open, lastSeen]);
 
-  // Mark as read when opened
   useEffect(() => {
     if (open && ticketId) {
       setLastSeen(prev => ({ ...prev, [ticketId]: Date.now() }));
@@ -99,12 +93,11 @@ export default function SupportWidget() {
 
   async function startChat() {
     if (!topic) return;
-    if (!studentId && !session?.user?.email && !email.trim()) return;
     setLoading(true);
     const res = await fetch("/api/support/tickets", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, topic }),
+      body: JSON.stringify({ topic }),
     });
     const data = await res.json();
     setTicketId(data.id);
@@ -134,15 +127,20 @@ export default function SupportWidget() {
   }
 
   const isLoggedIn = !!studentId || !!session?.user?.email;
-  const displayName = session?.user?.name ?? name ?? "there";
+  const displayName = session?.user?.name ?? (studentId ? "Student" : "there");
 
   return (
     <>
       {/* Floating button */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-6 right-6 z-50 flex items-center justify-center rounded-full shadow-lg transition hover:scale-105"
-        style={{ width: 56, height: 56, background: "#0284C7", position: "relative" }}
+        style={{
+          position: "fixed", bottom: 24, right: 24, zIndex: 50,
+          width: 56, height: 56, borderRadius: "50%",
+          background: "#0284C7", border: "none", cursor: "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+        }}
       >
         {open ? (
           <svg width="24" height="24" viewBox="0 0 24 24">
@@ -169,120 +167,106 @@ export default function SupportWidget() {
 
       {/* Widget */}
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 w-80 rounded-2xl overflow-hidden shadow-2xl flex flex-col" style={{ height: "520px", background: "white" }}>
+        <div style={{
+          position: "fixed", bottom: 96, right: 24, zIndex: 50,
+          width: 320, height: 520, borderRadius: 16,
+          overflow: "hidden", boxShadow: "0 8px 30px rgba(0,0,0,0.15)",
+          display: "flex", flexDirection: "column", background: "white"
+        }}>
 
           {/* Header */}
-          <div className="px-5 py-4 flex items-center gap-3" style={{ background: "#0284C7" }}>
+          <div style={{ background: "#0284C7", padding: "16px 20px", display: "flex", alignItems: "center", gap: 12 }}>
             {step !== "history" && (
               <button
                 onClick={() => setStep("history")}
-                style={{ background: "none", border: "none", color: "white", cursor: "pointer", padding: "0 8px 0 0", fontSize: "1rem" }}
+                style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1rem", padding: "0 8px 0 0" }}
               >
                 ←
               </button>
             )}
-            <img src="/images/LogoV1.png" alt="Orcanomics" className="h-8 w-8 rounded-lg object-contain" />
+            <img src="/images/LogoV1.png" alt="Orcanomics" style={{ width: 32, height: 32, borderRadius: 8, objectFit: "contain" }} />
             <div>
-              <p className="font-bold text-white text-sm">Orcanomics Support</p>
-              <p className="text-xs text-cyan-100">We typically reply within minutes</p>
+              <p style={{ margin: 0, fontWeight: 700, color: "white", fontSize: "0.9rem" }}>Orcanomics Support</p>
+              <p style={{ margin: 0, fontSize: "0.75rem", color: "#BAE6FD" }}>We typically reply within minutes</p>
             </div>
           </div>
 
           {/* History step */}
           {step === "history" && (
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              <p className="text-sm font-semibold text-slate-900">Hello {isLoggedIn ? displayName : ""}! 👋</p>
-              <p className="text-xs text-slate-500">How can we help you today?</p>
-
-              <button
-                onClick={() => setStep("info")}
-                className="w-full rounded-xl py-3 text-sm font-bold text-white"
-                style={{ background: "#0284C7" }}
-              >
-                + New Conversation
-              </button>
-
-              {tickets.length > 0 && (
+            <div style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+              {!isLoggedIn ? (
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, textAlign: "center", padding: "0 16px" }}>
+                  <div style={{ fontSize: "3rem" }}>🔒</div>
+                  <p style={{ fontWeight: 700, color: "#0F172A", margin: 0 }}>Sign in required</p>
+                  <p style={{ fontSize: "0.85rem", color: "#64748B", margin: 0 }}>You must be signed in as a student or teacher to access support.</p>
+                  
+                    href="/login/student"
+                    style={{ width: "100%", background: "#0284C7", color: "white", padding: "12px", borderRadius: 10, fontWeight: 700, fontSize: "0.85rem", textAlign: "center", textDecoration: "none", display: "block" }}
+                  >
+                    Student Sign In
+                  </a>
+                  
+                    href="/login"
+                    style={{ width: "100%", background: "#F1F5F9", color: "#0F172A", padding: "12px", borderRadius: 10, fontWeight: 700, fontSize: "0.85rem", textAlign: "center", textDecoration: "none", display: "block" }}
+                  >
+                    Teacher Sign In
+                  </a>
+                </div>
+              ) : (
                 <>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mt-2">Previous Conversations</p>
-                  {tickets.map(ticket => (
-                    <div
-                      key={ticket.id}
-                      onClick={() => openTicket(ticket)}
-                      className="rounded-xl p-3 cursor-pointer hover:bg-slate-50 transition"
-                      style={{ border: "1px solid #E2E8F0" }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-semibold text-slate-900">{ticket.topic}</p>
-                        <span style={{
-                          fontSize: "0.65rem", fontWeight: 700, padding: "2px 8px",
-                          borderRadius: "999px",
-                          background: ticket.status === "open" ? "#DCFCE7" : "#F1F5F9",
-                          color: ticket.status === "open" ? "#059669" : "#64748B"
-                        }}>
-                          {ticket.status}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-400 mt-1">{new Date(ticket.created_at).toLocaleDateString()}</p>
-                    </div>
-                  ))}
+                  <p style={{ fontWeight: 600, color: "#0F172A", margin: 0 }}>Hello {displayName}! 👋</p>
+                  <p style={{ fontSize: "0.8rem", color: "#64748B", margin: 0 }}>How can we help you today?</p>
+                  <button
+                    onClick={() => setStep("info")}
+                    style={{ background: "#0284C7", color: "white", padding: "12px", borderRadius: 10, fontWeight: 700, fontSize: "0.85rem", border: "none", cursor: "pointer" }}
+                  >
+                    + New Conversation
+                  </button>
+                  {tickets.length > 0 && (
+                    <>
+                      <p style={{ fontSize: "0.7rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.05em", margin: "8px 0 0" }}>Previous Conversations</p>
+                      {tickets.map(ticket => (
+                        <div
+                          key={ticket.id}
+                          onClick={() => openTicket(ticket)}
+                          style={{ border: "1px solid #E2E8F0", borderRadius: 10, padding: 12, cursor: "pointer" }}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <p style={{ margin: 0, fontWeight: 600, fontSize: "0.85rem", color: "#0F172A" }}>{ticket.topic}</p>
+                            <span style={{
+                              fontSize: "0.65rem", fontWeight: 700, padding: "2px 8px", borderRadius: 999,
+                              background: ticket.status === "open" ? "#DCFCE7" : "#F1F5F9",
+                              color: ticket.status === "open" ? "#059669" : "#64748B"
+                            }}>
+                              {ticket.status}
+                            </span>
+                          </div>
+                          <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "#94A3B8" }}>{new Date(ticket.created_at).toLocaleDateString()}</p>
+                        </div>
+                      ))}
+                    </>
+                  )}
                 </>
-              )}
-
-              {!isLoggedIn && tickets.length === 0 && (
-                <p className="text-xs text-slate-400 text-center mt-4">
-                  Sign in as a student or teacher to view previous conversations
-                </p>
               )}
             </div>
           )}
 
           {/* Info step */}
           {step === "info" && (
-            <div className="flex-1 overflow-y-auto p-5 space-y-4">
-              {/* Always show signed-in confirmation; fall back to email fields if truly not logged in */}
-              {isLoggedIn ? (
-                <div className="rounded-xl p-3 text-sm" style={{ background: "#F0FDF4", border: "1px solid #BBF7D0" }}>
-                  <p className="font-semibold text-green-700">✓ Signed in as {displayName}</p>
-                  <p className="text-green-600 text-xs mt-0.5">Your conversation will be saved to your account</p>
-                </div>
-              ) : (
-                <>
-                  <div>
-                    <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
-                      Name <span className="text-slate-400 normal-case font-normal">Optional</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      placeholder="Enter your name"
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Email</label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500"
-                    />
-                  </div>
-                </>
-              )}
-
-              {/* Topic picker */}
+            <div style={{ flex: 1, overflowY: "auto", padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 10, padding: 12 }}>
+                <p style={{ margin: 0, fontWeight: 600, color: "#059669", fontSize: "0.85rem" }}>✓ Signed in as {displayName}</p>
+                <p style={{ margin: "4px 0 0", fontSize: "0.75rem", color: "#16A34A" }}>Your conversation will be saved to your account</p>
+              </div>
               <div>
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Topic</label>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <p style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 8px" }}>Select a Topic</p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {topics.map(t => (
                     <button
                       key={t}
                       onClick={() => setTopic(t)}
-                      className="rounded-full px-3 py-1 text-xs font-medium transition"
                       style={{
+                        padding: "6px 12px", borderRadius: 999, fontSize: "0.75rem", fontWeight: 600, cursor: "pointer",
                         background: topic === t ? "#0284C7" : "#F1F5F9",
                         color: topic === t ? "white" : "#475569",
                         border: topic === t ? "none" : "1px solid #E2E8F0"
@@ -293,12 +277,14 @@ export default function SupportWidget() {
                   ))}
                 </div>
               </div>
-
               <button
                 onClick={startChat}
-                disabled={!topic || (!isLoggedIn && !email.trim()) || loading}
-                className="w-full rounded-xl py-3 text-sm font-bold text-white transition disabled:opacity-50"
-                style={{ background: "#0284C7" }}
+                disabled={!topic || loading}
+                style={{
+                  background: "#0284C7", color: "white", padding: "12px", borderRadius: 10,
+                  fontWeight: 700, fontSize: "0.85rem", border: "none", cursor: "pointer",
+                  opacity: !topic || loading ? 0.5 : 1
+                }}
               >
                 {loading ? "Starting..." : "Start Chat →"}
               </button>
@@ -308,46 +294,41 @@ export default function SupportWidget() {
           {/* Chat step */}
           {step === "chat" && (
             <>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ background: "#F8FAFC" }}>
-                <div className="text-center">
-                  <span className="text-xs text-slate-400 bg-white rounded-full px-3 py-1 border border-slate-200">
+              <div style={{ flex: 1, overflowY: "auto", padding: 16, background: "#F8FAFC", display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ textAlign: "center" }}>
+                  <span style={{ fontSize: "0.75rem", color: "#94A3B8", background: "white", borderRadius: 999, padding: "4px 12px", border: "1px solid #E2E8F0" }}>
                     {topic}
                   </span>
                 </div>
-                <div className="flex gap-2">
-                  <div className="rounded-2xl rounded-tl-none px-4 py-2.5 text-sm max-w-xs" style={{ background: "#E2E8F0", color: "#1E293B" }}>
-                    Hi {displayName}! Thanks for reaching out about <strong>{topic}</strong>. A support agent will be with you shortly.
-                  </div>
+                <div style={{ background: "#E2E8F0", borderRadius: "18px 18px 18px 4px", padding: "10px 14px", fontSize: "0.85rem", color: "#1E293B", maxWidth: "85%" }}>
+                  Hi {displayName}! Thanks for reaching out about <strong>{topic}</strong>. A support agent will be with you shortly.
                 </div>
                 {messages.map(msg => (
-                  <div key={msg.id} className={`flex ${msg.sender === "customer" ? "justify-end" : "justify-start"}`}>
-                    <div
-                      className="rounded-2xl px-4 py-2.5 text-sm max-w-xs"
-                      style={{
-                        background: msg.sender === "customer" ? "#0284C7" : "#E2E8F0",
-                        color: msg.sender === "customer" ? "white" : "#1E293B",
-                        borderRadius: msg.sender === "customer" ? "18px 18px 4px 18px" : "18px 18px 18px 4px"
-                      }}
-                    >
+                  <div key={msg.id} style={{ display: "flex", justifyContent: msg.sender === "customer" ? "flex-end" : "flex-start" }}>
+                    <div style={{
+                      maxWidth: "85%", padding: "10px 14px", fontSize: "0.85rem",
+                      background: msg.sender === "customer" ? "#0284C7" : "#E2E8F0",
+                      color: msg.sender === "customer" ? "white" : "#1E293B",
+                      borderRadius: msg.sender === "customer" ? "18px 18px 4px 18px" : "18px 18px 18px 4px"
+                    }}>
                       {msg.message}
                     </div>
                   </div>
                 ))}
                 <div ref={bottomRef} />
               </div>
-              <div className="p-3 border-t border-slate-200 flex gap-2">
+              <div style={{ padding: 12, borderTop: "1px solid #E2E8F0", display: "flex", gap: 8 }}>
                 <input
                   type="text"
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && sendMessage()}
                   placeholder="Type a message..."
-                  className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-sm focus:outline-none focus:border-cyan-500"
+                  style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: "1px solid #E2E8F0", fontSize: "0.85rem", outline: "none" }}
                 />
                 <button
                   onClick={sendMessage}
-                  className="rounded-xl px-4 py-2 text-sm font-bold text-white"
-                  style={{ background: "#0284C7" }}
+                  style={{ background: "#0284C7", color: "white", padding: "10px 16px", borderRadius: 10, border: "none", fontWeight: 700, cursor: "pointer", fontSize: "0.85rem" }}
                 >
                   Send
                 </button>
