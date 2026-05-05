@@ -40,7 +40,6 @@ export default function SupportWidget() {
   const [lastSeen, setLastSeen] = useState<Record<string, number>>({});
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Get student id from cookie
   const [studentId, setStudentId] = useState<string | null>(null);
   useEffect(() => {
     const match = document.cookie.match(/student_id=([^;]+)/);
@@ -143,7 +142,7 @@ export default function SupportWidget() {
       <button
         onClick={() => setOpen(!open)}
         className="fixed bottom-6 right-6 z-50 flex items-center justify-center rounded-full shadow-lg transition hover:scale-105"
-        style={{ width: 56, height: 56, background: "#0284C7" }}
+        style={{ width: 56, height: 56, background: "#0284C7", position: "relative" }}
       >
         {open ? (
           <svg width="24" height="24" viewBox="0 0 24 24">
@@ -241,10 +240,18 @@ export default function SupportWidget() {
           {/* Info step */}
           {step === "info" && (
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
-              {!isLoggedIn && (
+              {/* Always show signed-in confirmation; fall back to email fields if truly not logged in */}
+              {isLoggedIn ? (
+                <div className="rounded-xl p-3 text-sm" style={{ background: "#F0FDF4", border: "1px solid #BBF7D0" }}>
+                  <p className="font-semibold text-green-700">✓ Signed in as {displayName}</p>
+                  <p className="text-green-600 text-xs mt-0.5">Your conversation will be saved to your account</p>
+                </div>
+              ) : (
                 <>
                   <div>
-                    <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Name <span className="text-slate-400 normal-case font-normal">Optional</span></label>
+                    <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+                      Name <span className="text-slate-400 normal-case font-normal">Optional</span>
+                    </label>
                     <input
                       type="text"
                       value={name}
@@ -265,12 +272,8 @@ export default function SupportWidget() {
                   </div>
                 </>
               )}
-              {isLoggedIn && (
-                <div className="rounded-xl p-3 text-sm" style={{ background: "#F0FDF4", border: "1px solid #BBF7D0" }}>
-                  <p className="font-semibold text-green-700">✓ Signed in</p>
-                  <p className="text-green-600 text-xs mt-0.5">Your conversation will be saved to your account</p>
-                </div>
-              )}
+
+              {/* Topic picker */}
               <div>
                 <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Topic</label>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -290,6 +293,7 @@ export default function SupportWidget() {
                   ))}
                 </div>
               </div>
+
               <button
                 onClick={startChat}
                 disabled={!topic || (!isLoggedIn && !email.trim()) || loading}
