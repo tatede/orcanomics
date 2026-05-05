@@ -199,13 +199,13 @@ export default function SupportWidget() {
                   <div style={{ fontSize: "3rem" }}>🔒</div>
                   <p style={{ fontWeight: 700, color: "#0F172A", margin: 0 }}>Sign in required</p>
                   <p style={{ fontSize: "0.85rem", color: "#64748B", margin: 0 }}>You must be signed in as a student or teacher to access support.</p>
-                  
+                  <a
                     href="/login/student"
                     style={{ width: "100%", background: "#0284C7", color: "white", padding: "12px", borderRadius: 10, fontWeight: 700, fontSize: "0.85rem", textAlign: "center", textDecoration: "none", display: "block" }}
                   >
                     Student Sign In
                   </a>
-                  
+                  <a
                     href="/login"
                     style={{ width: "100%", background: "#F1F5F9", color: "#0F172A", padding: "12px", borderRadius: 10, fontWeight: 700, fontSize: "0.85rem", textAlign: "center", textDecoration: "none", display: "block" }}
                   >
